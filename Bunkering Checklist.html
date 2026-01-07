@@ -8,22 +8,61 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .glass {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            /* Slate 50 */
+            color: #0f172a;
+            /* Slate 900 */
         }
 
-        .checklist-item {
-            @apply flex items-start space-x-3 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer;
+        .paper-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            /* Slate 200 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .input-field {
+            @apply w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all;
+        }
+
+        /* Radio Button Styling */
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #64748b;
+            /* Slate 500 */
+        }
+
+        .radio-label:hover {
+            color: #334155;
+        }
+
+        input[type="radio"] {
+            accent-color: #2563eb;
+            /* Blue 600 */
+            width: 1rem;
+            height: 1rem;
         }
     </style>
 </head>
 
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-20">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen pb-20">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 w-full glass z-50 p-4">
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 z-50 px-4 py-3">
         <div class="max-w-3xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <a href="TUGLIFE Marine - Command Center v4.2.html"
@@ -47,24 +86,20 @@
     <main class="max-w-3xl mx-auto pt-24 px-4 space-y-6">
 
         <!-- Header Fields -->
-        <section class="glass rounded-2xl p-6 space-y-4">
+        <section class="max-w-4xl mx-auto rounded-2xl p-6 space-y-4 bg-white border border-slate-200 shadow-sm mt-6">
             <div class="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="Filial"
-                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none">
-                <input type="text" placeholder="Rebocador"
-                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none">
-                <input type="datetime-local"
-                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none text-slate-400">
-                <input type="text" placeholder="PT Número"
-                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none">
+                <input type="text" placeholder="Filial" class="input-field bg-white">
+                <input type="text" placeholder="Rebocador" class="input-field bg-white">
+                <input type="datetime-local" class="input-field bg-white text-slate-500">
+                <input type="text" placeholder="PT Número" class="input-field bg-white">
             </div>
             <div class="grid grid-cols-2 gap-4">
-                <select class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none">
+                <select class="input-field bg-white">
                     <option>Tipo de Atividade</option>
                     <option>Gravidade</option>
                     <option>Bombeio</option>
                 </select>
-                <select class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none">
+                <select class="input-field bg-white">
                     <option>Tipo de Operação</option>
                     <option>Bunkering (Recebimento)</option>
                     <option>Transferência</option>
@@ -74,108 +109,102 @@
         </section>
 
         <!-- Section 4 (Moved): Supply Data & Metering -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-purple-400 uppercase tracking-widest pl-2">4. Dados do Fornecimento &
+        <section class="space-y-4 mt-6">
+            <h2 class="text-sm font-bold text-purple-600 uppercase tracking-widest pl-2">4. Dados do Fornecimento &
                 Medição</h2>
 
             <!-- Supply Info -->
-            <div class="glass rounded-2xl p-4 space-y-4">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="text" placeholder="Fornecedor"
-                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
-                    <input type="text" placeholder="Veículo / Balsa"
-                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
-                    <input type="text" placeholder="Nota Fiscal"
-                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
-                    <input type="text" placeholder="Produto (ex: MGO)"
-                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
+                    <input type="text" placeholder="Fornecedor" class="input-field bg-white">
+                    <input type="text" placeholder="Veículo / Balsa" class="input-field bg-white">
+                    <input type="text" placeholder="Nota Fiscal" class="input-field bg-white">
+                    <input type="text" placeholder="Produto (ex: MGO)" class="input-field bg-white">
                 </div>
                 <div>
                     <label class="text-xs text-slate-500 uppercase font-bold ml-1">Quantidade Nota Fiscal (Lts)</label>
                     <input type="number" placeholder="0"
-                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none text-xl font-mono text-white focus:border-purple-500 transition-colors">
+                        class="input-field bg-white text-xl font-mono font-bold text-slate-900 border-purple-200 focus:border-purple-500">
                 </div>
             </div>
 
             <!-- Metering & Times -->
-            <div class="glass rounded-2xl p-4 space-y-4">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Início Bombeio</label>
-                        <input type="time"
-                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none text-white focus:border-purple-500 transition-colors">
+                        <input type="time" class="input-field bg-white">
                     </div>
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Fim Bombeio</label>
-                        <input type="time"
-                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none text-white focus:border-purple-500 transition-colors">
+                        <input type="time" class="input-field bg-white">
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Flowmeter Inicial</label>
                         <input type="number" placeholder="0" oninput="calcTotalReceived()" id="meter-start"
-                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none font-mono focus:border-purple-500 transition-colors">
+                            class="input-field bg-white font-mono">
                     </div>
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Flowmeter Final</label>
                         <input type="number" placeholder="0" oninput="calcTotalReceived()" id="meter-end"
-                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none font-mono focus:border-purple-500 transition-colors">
+                            class="input-field bg-white font-mono">
                     </div>
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Total Recebido</label>
                         <input type="number" placeholder="0" readonly id="meter-total"
-                            class="bg-slate-800/50 rounded-lg p-3 w-full border border-slate-700 outline-none font-mono text-emerald-400">
+                            class="input-field bg-slate-50 font-mono text-emerald-600 font-bold border-emerald-200">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Section 5 (Moved): Sampling -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-pink-400 uppercase tracking-widest pl-2">5. Controle de Amostras</h2>
-            <div class="glass rounded-2xl p-4">
+        <section class="space-y-4 mt-6">
+            <h2 class="text-sm font-bold text-pink-600 uppercase tracking-widest pl-2">5. Controle de Amostras</h2>
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                 <div class="grid grid-cols-1 gap-3">
                     <div class="relative">
                         <input type="text" placeholder="Lacre Amostra Bordo (Ship's Sample)"
-                            class="bg-slate-800 rounded-lg p-3 pl-10 w-full border border-slate-700 outline-none focus:border-pink-500 transition-colors">
+                            class="input-field bg-white pl-10">
                         <i data-lucide="tag"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                     </div>
                     <div class="relative">
                         <input type="text" placeholder="Lacre Amostra Fornecedor (Supplier's Sample)"
-                            class="bg-slate-800 rounded-lg p-3 pl-10 w-full border border-slate-700 outline-none focus:border-pink-500 transition-colors">
+                            class="input-field bg-white pl-10">
                         <i data-lucide="tag"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                     </div>
                     <div class="relative">
                         <input type="text" placeholder="Lacre Amostra Retenção (Marpol/Retention)"
-                            class="bg-slate-800 rounded-lg p-3 pl-10 w-full border border-slate-700 outline-none focus:border-pink-500 transition-colors">
+                            class="input-field bg-white pl-10">
                         <i data-lucide="tag"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Section 1: Pre-Check -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-blue-400 uppercase tracking-widest pl-2">1. Antes do Início</h2>
-            <div class="glass rounded-2xl p-2" id="pre-check-list">
+        <section class="space-y-4 mt-6">
+            <h2 class="text-sm font-bold text-blue-600 uppercase tracking-widest pl-2">1. Antes do Início</h2>
+            <div id="pre-check-list">
                 <!-- Items populated via JS -->
             </div>
         </section>
 
         <!-- Section 2: Monitoring -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-emerald-400 uppercase tracking-widest pl-2">2. Monitoramento (30 em 30
+        <section class="space-y-4 mt-6">
+            <h2 class="text-sm font-bold text-emerald-600 uppercase tracking-widest pl-2">2. Monitoramento (30 em 30
                 min)</h2>
-            <div class="glass rounded-2xl p-4 space-y-4">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
                 <div id="monitoring-log" class="space-y-2">
                     <!-- Dynamic monitoring entries -->
                 </div>
                 <button onclick="addMonitoringEntry()"
-                    class="w-full py-3 border border-dashed border-slate-600 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-colors flex justify-center items-center space-x-2">
+                    class="w-full py-3 border border-dashed border-slate-300 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors flex justify-center items-center space-x-2">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span>Adicionar Registro de Monitoramento</span>
                 </button>
@@ -183,58 +212,56 @@
         </section>
 
         <!-- Section 3: Post-Check -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-amber-400 uppercase tracking-widest pl-2">3. Após o Término</h2>
-            <div class="glass rounded-2xl p-2" id="post-check-list">
+        <section class="space-y-4 mt-6">
+            <h2 class="text-sm font-bold text-amber-600 uppercase tracking-widest pl-2">3. Após o Término</h2>
+            <div id="post-check-list">
                 <!-- Items populated via JS -->
             </div>
         </section>
 
-
-
         <!-- Signatures -->
-        <section class="glass rounded-2xl p-6 space-y-6">
+        <section class="bg-white rounded-2xl p-6 space-y-6 mt-6 border border-slate-200 shadow-sm">
             <h3 class="text-xs font-bold text-slate-500 uppercase">Assinaturas Digitais</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Commander Signature -->
                 <div class="space-y-2">
-                    <div class="bg-slate-800/50 rounded-xl border border-dashed border-slate-700 p-1 relative">
+                    <div class="bg-slate-50 rounded-xl border border-dashed border-slate-300 p-1 relative">
                         <canvas id="sig-cmd"
-                            class="w-full h-32 bg-slate-900/50 rounded-lg cursor-crosshair touch-none"></canvas>
+                            class="w-full h-32 bg-white rounded-lg cursor-crosshair touch-none border border-slate-100"></canvas>
                         <div class="absolute top-2 right-2">
                             <button onclick="clearSig('sig-cmd')"
-                                class="p-1 bg-slate-700/50 hover:bg-red-500/20 text-slate-500 hover:text-red-400 rounded transition-colors"
+                                class="p-1 bg-white border border-slate-200 shadow-sm hover:bg-red-50 text-slate-400 hover:text-red-500 rounded transition-colors"
                                 title="Limpar">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                         <div class="absolute bottom-2 left-2 pointer-events-none opacity-50">
-                            <span class="text-[10px] uppercase font-bold text-slate-500">Assinatura do Comandante</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Assinatura do Comandante</span>
                         </div>
                     </div>
                     <input type="text" placeholder="Nome Legível do Comandante"
-                        class="w-full bg-transparent border-b border-slate-700 p-2 text-sm text-center outline-none focus:border-blue-500 transition-colors">
+                        class="input-field bg-white text-center">
                 </div>
 
                 <!-- Chief Engineer Signature -->
                 <div class="space-y-2">
-                    <div class="bg-slate-800/50 rounded-xl border border-dashed border-slate-700 p-1 relative">
+                    <div class="bg-slate-50 rounded-xl border border-dashed border-slate-300 p-1 relative">
                         <canvas id="sig-chf"
-                            class="w-full h-32 bg-slate-900/50 rounded-lg cursor-crosshair touch-none"></canvas>
+                            class="w-full h-32 bg-white rounded-lg cursor-crosshair touch-none border border-slate-100"></canvas>
                         <div class="absolute top-2 right-2">
                             <button onclick="clearSig('sig-chf')"
-                                class="p-1 bg-slate-700/50 hover:bg-red-500/20 text-slate-500 hover:text-red-400 rounded transition-colors"
+                                class="p-1 bg-white border border-slate-200 shadow-sm hover:bg-red-50 text-slate-400 hover:text-red-500 rounded transition-colors"
                                 title="Limpar">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                         <div class="absolute bottom-2 left-2 pointer-events-none opacity-50">
-                            <span class="text-[10px] uppercase font-bold text-slate-500">Assinatura Chefe de
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Assinatura Chefe de
                                 Máquinas</span>
                         </div>
                     </div>
                     <input type="text" placeholder="Nome Legível do Chefe de Máquinas"
-                        class="w-full bg-transparent border-b border-slate-700 p-2 text-sm text-center outline-none focus:border-blue-500 transition-colors">
+                        class="input-field bg-white text-center">
                 </div>
             </div>
         </section>
@@ -278,12 +305,31 @@
 
         function renderChecklist(items, containerId, prefix) {
             const container = document.getElementById(containerId);
+            container.className = 'bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm';
+
             items.forEach((item, index) => {
                 const div = document.createElement('div');
-                div.className = 'flex items-center space-x-3 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border-b border-white/5 last:border-0';
+                div.className = 'flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 p-4 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors';
+
+                const questionId = `${prefix}-${index}`;
+
                 div.innerHTML = `
-                    <input type="checkbox" id="${prefix}-${index}" class="w-5 h-5 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500">
-                    <label for="${prefix}-${index}" class="text-sm text-slate-300 flex-1 cursor-pointer select-none">${index + 1}. ${item}</label>
+                    <p class="text-sm text-slate-700 font-medium flex-1 leading-snug"><span class="font-bold text-slate-400 mr-2">${index + 1}.</span>${item}</p>
+                    
+                    <div class="radio-group shrink-0 bg-slate-100/50 p-2 rounded-lg border border-slate-200/50">
+                        <label class="radio-label">
+                            <input type="radio" name="${questionId}" value="sim" class="text-blue-600 focus:ring-blue-500 border-gray-300">
+                            <span>SIM</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="${questionId}" value="nao" class="text-red-600 focus:ring-red-500 border-gray-300">
+                            <span>NÃO</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="${questionId}" value="na" class="text-slate-600 focus:ring-slate-500 border-gray-300">
+                            <span>N/A</span>
+                        </label>
+                    </div>
                 `;
                 container.appendChild(div);
             });
