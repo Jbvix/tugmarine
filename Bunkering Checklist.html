@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunkering Checklist - FOR-OPE-009</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checklist-item {
+            @apply flex items-start space-x-3 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-20">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full glass z-50 p-4">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <a href="TUGLIFE Marine - Command Center v4.2.html"
+                    class="p-2 hover:bg-white/10 rounded-full transition-colors">
+                    <i data-lucide="arrow-left" class="w-6 h-6 text-blue-400"></i>
+                </a>
+                <div>
+                    <h1 class="text-lg font-bold">Bunkering Checklist</h1>
+                    <p class="text-xs text-slate-400">FOR-OPE-009 | Rev. 03</p>
+                </div>
+            </div>
+            <button onclick="exportReport()"
+                class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg text-sm font-bold flex items-center space-x-2">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+                <span>Compartilhar</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="max-w-3xl mx-auto pt-24 px-4 space-y-6">
+
+        <!-- Header Fields -->
+        <section class="glass rounded-2xl p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" placeholder="Filial"
+                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none">
+                <input type="text" placeholder="Rebocador"
+                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none">
+                <input type="datetime-local"
+                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none text-slate-400">
+                <input type="text" placeholder="PT Número"
+                    class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 focus:border-blue-500 outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <select class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none">
+                    <option>Tipo de Atividade</option>
+                    <option>Gravidade</option>
+                    <option>Bombeio</option>
+                </select>
+                <select class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none">
+                    <option>Tipo de Operação</option>
+                    <option>Bunkering (Recebimento)</option>
+                    <option>Transferência</option>
+                    <option>Retirada de Resíduos</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Section 1: Pre-Check -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-blue-400 uppercase tracking-widest pl-2">1. Antes do Início</h2>
+            <div class="glass rounded-2xl p-2" id="pre-check-list">
+                <!-- Items populated via JS -->
+            </div>
+        </section>
+
+        <!-- Section 2: Monitoring -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-emerald-400 uppercase tracking-widest pl-2">2. Monitoramento (30 em 30
+                min)</h2>
+            <div class="glass rounded-2xl p-4 space-y-4">
+                <div id="monitoring-log" class="space-y-2">
+                    <!-- Dynamic monitoring entries -->
+                </div>
+                <button onclick="addMonitoringEntry()"
+                    class="w-full py-3 border border-dashed border-slate-600 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-colors flex justify-center items-center space-x-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>Adicionar Registro de Monitoramento</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 3: Post-Check -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-amber-400 uppercase tracking-widest pl-2">3. Após o Término</h2>
+            <div class="glass rounded-2xl p-2" id="post-check-list">
+                <!-- Items populated via JS -->
+            </div>
+        </section>
+
+        <!-- Signatures -->
+        <section class="glass rounded-2xl p-6 space-y-6">
+            <h3 class="text-xs font-bold text-slate-500 uppercase">Assinaturas Digitais</h3>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div
+                        class="h-32 bg-slate-800/50 rounded-xl border border-dashed border-slate-700 flex items-center justify-center text-slate-600">
+                        <span class="text-xs">Assinatura Comandante</span>
+                    </div>
+                    <input type="text" placeholder="Nome do Comandante"
+                        class="w-full bg-transparent border-b border-slate-700 p-2 text-sm text-center outline-none">
+                </div>
+                <div class="space-y-2">
+                    <div
+                        class="h-32 bg-slate-800/50 rounded-xl border border-dashed border-slate-700 flex items-center justify-center text-slate-600">
+                        <span class="text-xs">Assinatura Chefe de Máquinas</span>
+                    </div>
+                    <input type="text" placeholder="Nome do Chefe de Máquinas"
+                        class="w-full bg-transparent border-b border-slate-700 p-2 text-sm text-center outline-none">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const PRE_CHECK_ITEMS = [
+            "Amostra de óleo coletada e identificada (FOR-OPE-011)?",
+            "Tanques sondados antes do início?",
+            "KIT SOPEP disponível no local?",
+            "Aterramento do caminhão/barcaça realizado?",
+            "Atividades simultâneas encerradas e tripulação completa?",
+            "Atividades a quente nas proximidades verificadas?",
+            "Reforço na amarração do rebocador realizado?",
+            "Caminhão informado para iniciar com baixa vazão?",
+            "Mangote possui certificação de uso?",
+            "Inspeção visual da extensão do mangote realizada?",
+            "Extintores posicionados próximos à tomada?",
+            "Drenos das bandejas de contenção fechados?",
+            "Bandejas de contenção íntegras?",
+            "Flanges vedados com fita anti-spray?",
+            "Tomada de recebimento oposta fechada?",
+            "Drenos para tanques de água oleosa abertos (se transf. entre embarcações)?",
+            "Lacres conferem com a nota fiscal?",
+            "Equipamentos de inspeção (lanterna, cinto) separados?",
+            "Pontos de escoamento no convés tampados?",
+            "Barreira de contenção instalada corretamente?",
+            "Bandeira BRAVO ou luz encarnada acionada?",
+            "Área isolada e sinalizada (Cartaz PRO-OPE-002)?",
+            "Outros rebocadores avisados para não atracar a contrabordo?"
+        ];
+
+        const POST_CHECK_ITEMS = [
+            "Conexões de bordo desfeitas?",
+            "Tanques sondados após o término?",
+            "Quantidades de fornecimento e recebimento coerentes?"
+        ];
+
+        function renderChecklist(items, containerId, prefix) {
+            const container = document.getElementById(containerId);
+            items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-3 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border-b border-white/5 last:border-0';
+                div.innerHTML = `
+                    <input type="checkbox" id="${prefix}-${index}" class="w-5 h-5 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500">
+                    <label for="${prefix}-${index}" class="text-sm text-slate-300 flex-1 cursor-pointer select-none">${index + 1}. ${item}</label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addMonitoringEntry() {
+            const logContainer = document.getElementById('monitoring-log');
+            const entry = document.createElement('div');
+            entry.className = 'bg-slate-800/50 p-3 rounded-lg border border-slate-700 flex items-center justify-between text-sm';
+
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            entry.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="font-mono text-emerald-400 font-bold">${time}</span>
+                    <span class="text-slate-300">Monitoramento de Rotina</span>
+                </div>
+                <div class="flex space-x-2">
+                    <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-xs font-bold">OK</span>
+                </div>
+            `;
+            logContainer.prepend(entry);
+        }
+
+        function exportReport() {
+            const text = "Relatório Bunkering Checklist - FOR-OPE-009\\nStatus: Concluído\\n...";
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Init
+        renderChecklist(PRE_CHECK_ITEMS, 'pre-check-list', 'pre');
+        renderChecklist(POST_CHECK_ITEMS, 'post-check-list', 'post');
+
+    </script>
+</body>
+
+</html>

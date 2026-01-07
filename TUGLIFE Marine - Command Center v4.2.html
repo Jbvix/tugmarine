@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,12 +9,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #020617; 
-            color: #f8fafc; 
-            -webkit-tap-highlight-color: transparent; 
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .glass-card {
@@ -28,29 +29,43 @@
             background: rgba(30, 41, 59, 0.8);
         }
 
-        .glow-blue { box-shadow: 0 0 30px -10px rgba(59, 130, 246, 0.3); }
-        .glow-emerald { box-shadow: 0 0 30px -10px rgba(16, 185, 129, 0.3); }
-        .glow-amber { box-shadow: 0 0 30px -10px rgba(245, 158, 11, 0.2); }
+        .glow-blue {
+            box-shadow: 0 0 30px -10px rgba(59, 130, 246, 0.3);
+        }
+
+        .glow-emerald {
+            box-shadow: 0 0 30px -10px rgba(16, 185, 129, 0.3);
+        }
+
+        .glow-amber {
+            box-shadow: 0 0 30px -10px rgba(245, 158, 11, 0.2);
+        }
 
         .logo-gradient {
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             box-shadow: 0 0 25px rgba(37, 99, 235, 0.4);
         }
 
-        input::placeholder { color: #475569; font-weight: 600; }
+        input::placeholder {
+            color: #475569;
+            font-weight: 600;
+        }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col p-6 pb-12">
 
     <!-- Header Central de Comando -->
     <header class="max-w-md mx-auto w-full text-center pt-8">
-        <div class="inline-flex items-center justify-center w-20 h-20 logo-gradient rounded-[2rem] mb-6 border-2 border-white/10 animate-pulse">
+        <div
+            class="inline-flex items-center justify-center w-20 h-20 logo-gradient rounded-[2rem] mb-6 border-2 border-white/10 animate-pulse">
             <span class="text-3xl font-black italic text-white tracking-tighter">TL</span>
         </div>
         <h1 class="text-4xl font-black uppercase italic tracking-tighter text-white leading-none">
             Tuglife <span class="text-blue-500">Marine</span>
         </h1>
-        <p class="text-[10px] uppercase font-bold tracking-[0.4em] text-slate-500 mt-3 italic">Marine Engineering Suite v4.2</p>
+        <p class="text-[10px] uppercase font-bold tracking-[0.4em] text-slate-500 mt-3 italic">Marine Engineering Suite
+            v4.2</p>
     </header>
 
     <!-- Identidade da Operação -->
@@ -60,24 +75,26 @@
                 <i data-lucide="anchor" class="w-3 h-3 text-blue-500"></i>
                 <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Identidade da Operação</h3>
             </div>
-            
+
             <div class="space-y-3">
                 <div class="relative">
-                    <input type="text" id="global-vessel" oninput="saveIdentity()" placeholder="REBOCADOR" 
+                    <input type="text" id="global-vessel" oninput="saveIdentity()" placeholder="REBOCADOR"
                         class="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-4 pl-12 text-xs font-black uppercase text-white outline-none focus:ring-2 focus:ring-blue-600 transition-all">
                     <i data-lucide="ship" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
                 </div>
-                
+
                 <div class="relative">
-                    <input type="text" id="global-port" oninput="saveIdentity()" placeholder="PORTO / FILIAL" 
+                    <input type="text" id="global-port" oninput="saveIdentity()" placeholder="PORTO / FILIAL"
                         class="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-4 pl-12 text-xs font-black uppercase text-white outline-none focus:ring-2 focus:ring-blue-600 transition-all">
-                    <i data-lucide="map-pin" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
+                    <i data-lucide="map-pin"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
                 </div>
 
                 <div class="relative">
-                    <input type="text" id="global-chemaq" oninput="saveIdentity()" placeholder="NOME DO CHEMAQ" 
+                    <input type="text" id="global-chemaq" oninput="saveIdentity()" placeholder="NOME DO CHEMAQ"
                         class="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-4 pl-12 text-xs font-black uppercase text-blue-400 outline-none focus:ring-2 focus:ring-blue-600 transition-all">
-                    <i data-lucide="user-cog" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
+                    <i data-lucide="user-cog"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
                 </div>
             </div>
         </div>
@@ -85,12 +102,14 @@
 
     <!-- Módulos Principais -->
     <main class="max-w-md mx-auto w-full mt-8 space-y-3 flex-1">
-        
+
         <h3 class="text-[9px] font-black text-slate-600 uppercase tracking-widest pl-4 mb-2">Operações & Engenharia</h3>
 
         <!-- Calculadora -->
-        <a href="TUGLIFE - Marine Calculator.html" class="block glass-card rounded-[2rem] p-5 flex items-center space-x-5 glow-blue border-l-4 border-blue-600">
-            <div class="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20">
+        <a href="TUGLIFE - Marine Calculator.html"
+            class="block glass-card rounded-[2rem] p-5 flex items-center space-x-5 glow-blue border-l-4 border-blue-600">
+            <div
+                class="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20">
                 <i data-lucide="calculator" class="w-7 h-7 text-blue-500"></i>
             </div>
             <div class="flex-1">
@@ -101,8 +120,10 @@
         </a>
 
         <!-- Bunkering -->
-        <a href="TUGLIFE - Advanced Bunkering Assistant v3.5.html" class="block glass-card rounded-[2rem] p-5 flex items-center space-x-5 glow-emerald border-l-4 border-emerald-600">
-            <div class="w-14 h-14 bg-emerald-600/10 rounded-2xl flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+        <a href="TUGLIFE - Advanced Bunkering Assistant v3.5.html"
+            class="block glass-card rounded-[2rem] p-5 flex items-center space-x-5 glow-emerald border-l-4 border-emerald-600">
+            <div
+                class="w-14 h-14 bg-emerald-600/10 rounded-2xl flex items-center justify-center text-emerald-500 border border-emerald-500/20">
                 <i data-lucide="fuel" class="w-7 h-7 text-emerald-500"></i>
             </div>
             <div class="flex-1">
@@ -113,24 +134,29 @@
         </a>
 
         <!-- Checklist -->
-        <a href="SAAM TOWAGE - FOR-OPE-009.html" class="block glass-card rounded-[2rem] p-5 flex items-center space-x-5 shadow-lg border-l-4 border-slate-500">
-            <div class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 border border-slate-700">
+        <a href="Bunkering Checklist.html"
+            class="block glass-card rounded-[2rem] p-5 flex items-center space-x-5 shadow-lg border-l-4 border-slate-500">
+            <div
+                class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 border border-slate-700">
                 <i data-lucide="clipboard-check" class="w-7 h-7"></i>
             </div>
             <div class="flex-1">
                 <h2 class="text-sm font-black uppercase text-white leading-none">Checklist</h2>
-                <p class="text-[9px] text-slate-400 font-bold uppercase mt-1.5 tracking-tight">Compliance FOR-OPE-009</p>
+                <p class="text-[9px] text-slate-400 font-bold uppercase mt-1.5 tracking-tight">Compliance FOR-OPE-009
+                </p>
             </div>
             <i data-lucide="chevron-right" class="text-slate-800 w-5 h-5"></i>
         </a>
 
         <!-- Grelha de Suporte -->
         <div class="grid grid-cols-2 gap-3 pt-4">
-            <a href="TUGLIFE - Auto Validation Log v2.2.html" class="glass-card rounded-3xl p-4 flex flex-col items-center text-center space-y-2 glow-amber border border-amber-500/10">
+            <a href="TUGLIFE - Auto Validation Log v2.2.html"
+                class="glass-card rounded-3xl p-4 flex flex-col items-center text-center space-y-2 glow-amber border border-amber-500/10">
                 <i data-lucide="shield-check" class="text-amber-500 w-6 h-6"></i>
                 <span class="text-[9px] font-black uppercase text-slate-300">Auto Auditor</span>
             </a>
-            <a href="Histórico TUGLIFE Marine.html" class="glass-card rounded-3xl p-4 flex flex-col items-center text-center space-y-2">
+            <a href="Histórico TUGLIFE Marine.html"
+                class="glass-card rounded-3xl p-4 flex flex-col items-center text-center space-y-2">
                 <i data-lucide="history" class="text-blue-400 w-6 h-6"></i>
                 <span class="text-[9px] font-black uppercase text-slate-300">Histórico</span>
             </a>
@@ -155,7 +181,7 @@
                 port: document.getElementById('global-port').value
             };
             const chemaq = document.getElementById('global-chemaq').value;
-            
+
             // Persistência em LocalStorage (Barramento de Dados)
             localStorage.setItem('TUGLIFE_GLOBAL', JSON.stringify(data));
             localStorage.setItem('TUGLIFE_CHEMAQ', chemaq);
@@ -165,11 +191,11 @@
             const savedGlobal = JSON.parse(localStorage.getItem('TUGLIFE_GLOBAL'));
             const savedChemaq = localStorage.getItem('TUGLIFE_CHEMAQ');
 
-            if(savedGlobal) {
+            if (savedGlobal) {
                 document.getElementById('global-vessel').value = savedGlobal.vessel || '';
                 document.getElementById('global-port').value = savedGlobal.port || '';
             }
-            if(savedChemaq) {
+            if (savedChemaq) {
                 document.getElementById('global-chemaq').value = savedChemaq;
             }
         }
@@ -180,4 +206,5 @@
         };
     </script>
 </body>
+
 </html>
