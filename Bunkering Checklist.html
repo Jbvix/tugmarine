@@ -141,21 +141,39 @@
                         <input type="time" class="input-field bg-white">
                     </div>
                 </div>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Flowmeter Inicial</label>
                         <input type="number" placeholder="0" oninput="calcTotalReceived()" id="meter-start"
-                            class="input-field bg-white font-mono">
+                            class="input-field bg-white font-mono border-blue-200 focus:border-blue-500">
                     </div>
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Flowmeter Final</label>
                         <input type="number" placeholder="0" oninput="calcTotalReceived()" id="meter-end"
-                            class="input-field bg-white font-mono">
+                            class="input-field bg-white font-mono border-blue-200 focus:border-blue-500">
                     </div>
                     <div>
                         <label class="text-xs text-slate-500 uppercase font-bold ml-1">Total Recebido</label>
                         <input type="number" placeholder="0" readonly id="meter-total"
-                            class="input-field bg-slate-50 font-mono text-emerald-600 font-bold border-emerald-200">
+                            class="input-field bg-slate-50 font-mono text-emerald-600 font-bold border-emerald-200 text-xl">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alternative: ROB Measurement -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <h3 class="text-xs font-bold text-amber-600 uppercase border-b border-amber-100 pb-2">Alternativa:
+                    Medição por Tanque (Sem Flowmeter)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500 uppercase font-bold ml-1">ROB Inicial (Lts)</label>
+                        <input type="number" placeholder="0" oninput="calcTotalReceived()" id="rob-start"
+                            class="input-field bg-white font-mono border-amber-200 focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 uppercase font-bold ml-1">ROB Final (Lts)</label>
+                        <input type="number" placeholder="0" oninput="calcTotalReceived()" id="rob-end"
+                            class="input-field bg-white font-mono border-amber-200 focus:border-amber-500">
                     </div>
                 </div>
             </div>
@@ -421,9 +439,21 @@
         }
 
         function calcTotalReceived() {
-            const start = parseFloat(document.getElementById('meter-start').value) || 0;
-            const end = parseFloat(document.getElementById('meter-end').value) || 0;
-            const total = end > start ? end - start : 0;
+            const mStart = parseFloat(document.getElementById('meter-start').value) || 0;
+            const mEnd = parseFloat(document.getElementById('meter-end').value) || 0;
+
+            const rStart = parseFloat(document.getElementById('rob-start').value) || 0;
+            const rEnd = parseFloat(document.getElementById('rob-end').value) || 0;
+
+            let total = 0;
+
+            // Priority: Flowmeter > ROB
+            if (mEnd > 0 || mStart > 0) {
+                total = mEnd > mStart ? mEnd - mStart : 0;
+            } else {
+                total = rEnd > rStart ? rEnd - rStart : 0;
+            }
+
             document.getElementById('meter-total').value = total.toLocaleString('pt-BR');
         }
 
