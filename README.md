@@ -1,41 +1,89 @@
-# ⚓ TUGLIFE Marine - Command Center v4.2
+# ⚓ TUGLIFE Marine Suite v4.5
 
-> **Marine Engineering Suite** - A progressive suite of tools for naval operations and engineering.
+> **Engineering & Operations Hub** - A progressive web suite for maritime operations, consolidating calculation, compliance, and logistics into a unified mobile-first interface.
 
 ## 📋 Overview
 
-**TUGLIFE Marine** is a comprehensive dashboard designed to streamline marine operations. It serves as a central hub for accessing various engineering and logistical tools, ensuring efficiency and compliance in maritime activities.
+**TUGLIFE Marine** is a high-performance PWA (Progressive Web App) designed to streamline daily tasks for tugboat engineers and captains. It replaces scattered spreadsheets and physical forms with a centralized, persistent, and intelligent digital command center.
 
-## 🚀 Modules
+**Version:** 4.5 (Consolidated)
+**Platform:** Web (Mobile-First / Desktop Compatible)
 
-The suite includes the following integrated modules:
+---
 
-* **🧮 Calculator (Sondagem e Saldo ROB):** Advanced tools for fuel sounding and Remaining On Board calculations.
-* **⛽ Bunkering (Logística de Carga 5K):** Specialized assistant for bunkering operations and cargo logistics.
-* **✅ Checklist (Compliance FOR-OPE-009):** Digital checklist system to ensure adherence to operational standards.
-* **🛡️ Auto Auditor:** Automated validation log for monitoring and auditing.
-* **📜 History:** A record-keeping module for tracking operations.
+## 🚀 Core Architecture
 
-## 💻 Tech Stack
+The suite is built on a modular architecture using Vanilla JavaScript and TailwindCSS, ensuring zero build-step requirements and instant local execution.
 
-Built with modern web technologies for performance and reliability:
+### File Structure
 
-* **Core:** HTML5, JavaScript (ES6+)
-* **Styling:** TailwindCSS 3.4
+* **`SoundingData.js`**: Centralized, unified database of tanl calibration tables (Sounding vs Volume) for all supported vessel classes.
+* **`CalculatorEngine.js`**: The mathematical core that handles interpolation (Bilinear/Linear), unit conversion (CM/MM), and volume logic.
+* **`TUGLIFE Marine - Command Center v4.2.html`**: The main dashboard and navigation hub.
+* **`TUGLIFE - Marine Calculator.html`**: The primary tool for sounding and tank inventory.
+* **`Bunkering Checklist.html`**: Digital compliance tool for bunkering operations.
+
+---
+
+## 🛠️ Modules & Features
+
+### 1. 🧮 Marine Calculator (v4.5)
+
+* **Unified Engine:** Supports multiple vessel classes (ASD 2411, Rampart 2500, etc.) with automatic unit detection (cm/mm).
+* **Consolidated Log:** Allows registering multiple tank measurements in a single session.
+* **Photo Evidence (NEW):**
+  * Integrated camera support (`capture="environment"`) to attach photos of sounding tapes directly to the log.
+  * Thumbnail previews in the measurement list.
+* **Smart Sharing:**
+  * **Mobile:** Uses the **Web Share API** to share a complete report text + attached photo files directly to WhatsApp.
+  * **Desktop:** detailed text summary generation via WhatsApp Web.
+* **Visual Logic:** Dynamic tank visualization showing real-time fill percentage and color-coded alerts.
+
+### 2. ✅ Bunkering Checklist
+
+* **Compliance:** Digitized **FOR-OPE-009** standard.
+* **UI/UX:**
+  * **Light Mode:** Clean, white-paper aesthetic for readability in direct sunlight.
+  * **Radio Logic:** Explicit "Sim / Não / N/A" options for every check.
+* **Workflow:** Segregated into Pre-Check, Monitoring (every 30m), and Post-Check phases.
+* **Responsiveness:** Optimized specifically for mobile screens (Xiaomi Poco X6 Pro reference) with vertical stacking grids.
+
+### 3. 🛡️ Command Center
+
+* **Global Identity:** Persists vessel name, port, and Chief Engineer name across all modules using `LocalStorage`.
+* **Navigation:** Central access point to all tools (Calculator, Bunkering, Auto Auditor, History).
+
+---
+
+## 🚢 Supported Classes
+
+The system currently includes calibration tables for:
+
+* **Classe A (ASD 2411)** - *Unit: CM*
+* **Classe C (Canindé/Cascos 322-326)** - *Unit: MM*
+* **Classe P** - *Unit: MM*
+* **Classe T (Rampart 2500)** - *Unit: MM*
+* **Classe LH1500** - *Unit: MM*
+
+---
+
+## 📱 Mobile Optimization
+
+Technical adjustments made for **Xiaomi Poco X6 Pro 5G** and similar devices:
+
+* **Grid System:** `grid-cols-1` (Mobile) -> `grid-cols-2` (Desktop) automatic switching.
+* **Touch Targets:** Enlarged input fields and buttons (48px+ min-height).
+* **Viewports:** Proper safe-area padding and `meta viewport` configuration.
+
+---
+
+## 💻 Technical Stack
+
+* **Core:** HTML5, JavaScript (ES6 Modules)
+* **Styling:** TailwindCSS (CDN)
 * **Icons:** Lucide Icons
-* **Storage:** LocalStorage (Client-side persistence)
-
-## 🛠️ Usage
-
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/Jbvix/tugmarine.git
-    ```
-
-2. Navigate to the project folder.
-3. Open the **Command Center** in your browser:
-    * File: `TUGLIFE Marine - Command Center v4.2.html`
+* **Persistence:** `window.localStorage`
+* **Sharing:** `navigator.share` (Level 2)
 
 ## 👤 Author
 
