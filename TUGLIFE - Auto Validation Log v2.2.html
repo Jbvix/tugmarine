@@ -346,8 +346,45 @@
         }
 
         function shareReport() {
-            // ... Share logic
-            window.open(`https://wa.me/?text=Report`, '_blank');
+            // Get Global Data
+            const global = JSON.parse(localStorage.getItem('TUGLIFE_GLOBAL')) || {};
+            const chemaq = localStorage.getItem('TUGLIFE_CHEMAQ') || "N/A";
+            const vessel = global.vessel || "REBOCADOR";
+            const port = global.port || "PORTO";
+
+            // Compile Audit Data
+            const cK = document.getElementById('select-classe').value;
+            const tK = document.getElementById('select-tanque').options[document.getElementById('select-tanque').selectedIndex].text;
+
+            let reportTitle = currentMode === 'auto' ? "AUDITORIA DE CHECKPOINTS" : "VERIFICAÇÃO MANUAL";
+            let resultText = "";
+
+            // Scrape results from DOM (simplified approach since we don't store state fully in var)
+            // Ideally we should have stored `lastAuditResults`
+            // Let's grab the status header at least
+            const status = document.getElementById('results-title').textContent;
+
+            let m = `*TUGLIFE - AUTO VALIDATOR* %0A` +
+                `🚢 *${vessel}* | 📍 ${port} %0A` +
+                `👤 Chemaq: ${chemaq} %0A` +
+                `🧪 MODO: ${reportTitle} %0A` +
+                `🛢️ TANQUE: ${tK} %0A` +
+                `--------------------------%0A`;
+
+            // Note: For a proper detailed report, we'd need to rebuild the string from the logic.
+            // For now, let's share the high-level summary or just open the chat with the header.
+            // Extending to grab content from cards:
+
+            const cards = document.querySelectorAll('#suite-container .glass-card');
+            cards.forEach(card => {
+                const label = card.querySelector('.text-slate-400').textContent; // Input/Checkpoint
+                const statusPill = card.querySelector('.status-pill').textContent.trim(); // Conforme/Passou
+                const val = card.querySelector('.text-white.mono').textContent; // Calculated
+
+                m += `▪️ ${label} -> ${statusPill} [${val}] %0A`;
+            });
+
+            window.open(`https://wa.me/?text=${m}`, '_blank');
         }
 
         window.onload = init;

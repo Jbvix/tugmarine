@@ -333,9 +333,17 @@
         function shareReport() {
             if (measurements.length === 0) return;
 
+            // Get Global Data
+            const global = JSON.parse(localStorage.getItem('TUGLIFE_GLOBAL')) || {};
+            const chemaq = localStorage.getItem('TUGLIFE_CHEMAQ') || "N/A";
+            const vessel = global.vessel || "REBOCADOR";
+            const port = global.port || "PORTO";
+
             let total = measurements.reduce((acc, m) => acc + m.vol, 0);
 
-            let text = `*TUGLIFE Marine - INV. TOTAL* %0A` +
+            let text = `*TUGLIFE MARINE - INVENTÁRIO* %0A` +
+                `🚢 *${vessel}* | 📍 ${port} %0A` +
+                `👤 Chemaq: ${chemaq} %0A` +
                 `🕒 ${new Date().toLocaleString()} %0A` +
                 `---------------------------- %0A`;
 

@@ -322,12 +322,23 @@
         }
 
         function enviarPlanoWhatsApp() {
-            const r = (document.getElementById('id-rebocador')?.value || "REBOCADOR").toUpperCase();
-            let m = `*TUGLIFE - PLANO DE BUNKERING - ${r}*\n*TOTAL:* ${bunkerState.total.toLocaleString('pt-PT')} LTS\n--------------------------\n`;
+            // Get Global Data
+            const global = JSON.parse(localStorage.getItem('TUGLIFE_GLOBAL')) || {};
+            const chemaq = localStorage.getItem('TUGLIFE_CHEMAQ') || "N/A";
+            const vessel = global.vessel || (document.getElementById('id-rebocador')?.value || "REBOCADOR").toUpperCase();
+            const port = global.port || "PORTO";
+
+            let m = `*TUGLIFE - PLANO DE BUNKERING* %0A` +
+                `🚢 *${vessel}* | 📍 ${port} %0A` +
+                `👤 Chemaq: ${chemaq} %0A` +
+                `--------------------------%0A` +
+                `*TOTAL:* ${bunkerState.total.toLocaleString('pt-PT')} LTS%0A` +
+                `--------------------------%0A`;
+
             bunkerState.list.forEach(t => {
-                m += `• *${t.n}*\n  - RECEBER: ${t.lotes} lotes de 5k ${t.frac > 0 ? '+ ' + t.frac + 'L' : ''}\n  - RÉGUA FINAL: ${t.fs.toFixed(1)} cm\n\n`;
+                m += `• *${t.n}*%0A  - RECEBER: ${t.lotes} lotes de 5k ${t.frac > 0 ? '+ ' + t.frac + 'L' : ''}%0A  - RÉGUA FINAL: ${t.fs.toFixed(1)} cm%0A%0A`;
             });
-            window.open(`https://wa.me/?text=${encodeURIComponent(m)}`, '_blank');
+            window.open(`https://wa.me/?text=${m}`, '_blank');
         }
 
         window.onload = init;
