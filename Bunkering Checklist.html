@@ -73,39 +73,7 @@
             </div>
         </section>
 
-        <!-- Section 1: Pre-Check -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-blue-400 uppercase tracking-widest pl-2">1. Antes do Início</h2>
-            <div class="glass rounded-2xl p-2" id="pre-check-list">
-                <!-- Items populated via JS -->
-            </div>
-        </section>
-
-        <!-- Section 2: Monitoring -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-emerald-400 uppercase tracking-widest pl-2">2. Monitoramento (30 em 30
-                min)</h2>
-            <div class="glass rounded-2xl p-4 space-y-4">
-                <div id="monitoring-log" class="space-y-2">
-                    <!-- Dynamic monitoring entries -->
-                </div>
-                <button onclick="addMonitoringEntry()"
-                    class="w-full py-3 border border-dashed border-slate-600 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-colors flex justify-center items-center space-x-2">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                    <span>Adicionar Registro de Monitoramento</span>
-                </button>
-            </div>
-        </section>
-
-        <!-- Section 3: Post-Check -->
-        <section class="space-y-4">
-            <h2 class="text-sm font-bold text-amber-400 uppercase tracking-widest pl-2">3. Após o Término</h2>
-            <div class="glass rounded-2xl p-2" id="post-check-list">
-                <!-- Items populated via JS -->
-            </div>
-        </section>
-
-        <!-- Section 4: Supply Data & Metering -->
+        <!-- Section 4 (Moved): Supply Data & Metering -->
         <section class="space-y-4">
             <h2 class="text-sm font-bold text-purple-400 uppercase tracking-widest pl-2">4. Dados do Fornecimento &
                 Medição</h2>
@@ -163,7 +131,7 @@
             </div>
         </section>
 
-        <!-- Section 5: Sampling -->
+        <!-- Section 5 (Moved): Sampling -->
         <section class="space-y-4">
             <h2 class="text-sm font-bold text-pink-400 uppercase tracking-widest pl-2">5. Controle de Amostras</h2>
             <div class="glass rounded-2xl p-4">
@@ -189,6 +157,40 @@
                 </div>
             </div>
         </section>
+
+        <!-- Section 1: Pre-Check -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-blue-400 uppercase tracking-widest pl-2">1. Antes do Início</h2>
+            <div class="glass rounded-2xl p-2" id="pre-check-list">
+                <!-- Items populated via JS -->
+            </div>
+        </section>
+
+        <!-- Section 2: Monitoring -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-emerald-400 uppercase tracking-widest pl-2">2. Monitoramento (30 em 30
+                min)</h2>
+            <div class="glass rounded-2xl p-4 space-y-4">
+                <div id="monitoring-log" class="space-y-2">
+                    <!-- Dynamic monitoring entries -->
+                </div>
+                <button onclick="addMonitoringEntry()"
+                    class="w-full py-3 border border-dashed border-slate-600 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-colors flex justify-center items-center space-x-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>Adicionar Registro de Monitoramento</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 3: Post-Check -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-amber-400 uppercase tracking-widest pl-2">3. Após o Término</h2>
+            <div class="glass rounded-2xl p-2" id="post-check-list">
+                <!-- Items populated via JS -->
+            </div>
+        </section>
+
+
 
         <!-- Signatures -->
         <section class="glass rounded-2xl p-6 space-y-6">
