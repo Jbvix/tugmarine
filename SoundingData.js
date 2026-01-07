@@ -125,6 +125,27 @@ const VESSEL_DATA = {
                 "TK6_BB": { "0": [{ s: 0, v: 6 }, { s: 220, v: 13981 }] },
                 "TK6_BE": { "0": [{ s: 0, v: 8 }, { s: 220, v: 11694 }] }
             }
+        },
+        "320": {
+            "name": "Classe 320 (Craó/Carajá)",
+            "unit": "mm",
+            "trim_type": "linear",
+            "tanks": [
+                { "id": "DIARIO_BB", "name": "Diário BB", "max_vol": 15000 },
+                { "id": "DIARIO_BE", "name": "Diário BE", "max_vol": 15000 },
+                { "id": "LATERAL_BB", "name": "Lateral BB", "max_vol": 18000 },
+                { "id": "LATERAL_BE", "name": "Lateral BE", "max_vol": 18000 },
+                { "id": "CENTRAL", "name": "Central", "max_vol": 40000 },
+                { "id": "SERVICO", "name": "Tanque de Serviço", "max_vol": 5000 }
+            ],
+            "tables": {
+                "DIARIO_BB": { "0": [{ s: 0, v: 0 }, { s: 2000, v: 15000 }] },
+                "DIARIO_BE": { "0": [{ s: 0, v: 0 }, { s: 2000, v: 15000 }] },
+                "LATERAL_BB": { "0": [{ s: 0, v: 0 }, { s: 2000, v: 18000 }] },
+                "LATERAL_BE": { "0": [{ s: 0, v: 0 }, { s: 2000, v: 18000 }] },
+                "CENTRAL": { "0": [{ s: 0, v: 0 }, { s: 2000, v: 40000 }] },
+                "SERVICO": { "0": [{ s: 0, v: 0 }, { s: 2000, v: 5000 }] }
+            }
         }
     }
 };
