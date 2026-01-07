@@ -105,6 +105,91 @@
             </div>
         </section>
 
+        <!-- Section 4: Supply Data & Metering -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-purple-400 uppercase tracking-widest pl-2">4. Dados do Fornecimento &
+                Medição</h2>
+
+            <!-- Supply Info -->
+            <div class="glass rounded-2xl p-4 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="Fornecedor"
+                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
+                    <input type="text" placeholder="Veículo / Balsa"
+                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
+                    <input type="text" placeholder="Nota Fiscal"
+                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
+                    <input type="text" placeholder="Produto (ex: MGO)"
+                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none focus:border-purple-500 transition-colors">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-500 uppercase font-bold ml-1">Quantidade Nota Fiscal (Lts)</label>
+                    <input type="number" placeholder="0"
+                        class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none text-xl font-mono text-white focus:border-purple-500 transition-colors">
+                </div>
+            </div>
+
+            <!-- Metering & Times -->
+            <div class="glass rounded-2xl p-4 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500 uppercase font-bold ml-1">Início Bombeio</label>
+                        <input type="time"
+                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none text-white focus:border-purple-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 uppercase font-bold ml-1">Fim Bombeio</label>
+                        <input type="time"
+                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none text-white focus:border-purple-500 transition-colors">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500 uppercase font-bold ml-1">Flowmeter Inicial</label>
+                        <input type="number" placeholder="0" oninput="calcTotalReceived()" id="meter-start"
+                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none font-mono focus:border-purple-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 uppercase font-bold ml-1">Flowmeter Final</label>
+                        <input type="number" placeholder="0" oninput="calcTotalReceived()" id="meter-end"
+                            class="bg-slate-800 rounded-lg p-3 w-full border border-slate-700 outline-none font-mono focus:border-purple-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 uppercase font-bold ml-1">Total Recebido</label>
+                        <input type="number" placeholder="0" readonly id="meter-total"
+                            class="bg-slate-800/50 rounded-lg p-3 w-full border border-slate-700 outline-none font-mono text-emerald-400">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Sampling -->
+        <section class="space-y-4">
+            <h2 class="text-sm font-bold text-pink-400 uppercase tracking-widest pl-2">5. Controle de Amostras</h2>
+            <div class="glass rounded-2xl p-4">
+                <div class="grid grid-cols-1 gap-3">
+                    <div class="relative">
+                        <input type="text" placeholder="Lacre Amostra Bordo (Ship's Sample)"
+                            class="bg-slate-800 rounded-lg p-3 pl-10 w-full border border-slate-700 outline-none focus:border-pink-500 transition-colors">
+                        <i data-lucide="tag"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                    </div>
+                    <div class="relative">
+                        <input type="text" placeholder="Lacre Amostra Fornecedor (Supplier's Sample)"
+                            class="bg-slate-800 rounded-lg p-3 pl-10 w-full border border-slate-700 outline-none focus:border-pink-500 transition-colors">
+                        <i data-lucide="tag"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                    </div>
+                    <div class="relative">
+                        <input type="text" placeholder="Lacre Amostra Retenção (Marpol/Retention)"
+                            class="bg-slate-800 rounded-lg p-3 pl-10 w-full border border-slate-700 outline-none focus:border-pink-500 transition-colors">
+                        <i data-lucide="tag"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Signatures -->
         <section class="glass rounded-2xl p-6 space-y-6">
             <h3 class="text-xs font-bold text-slate-500 uppercase">Assinaturas Digitais</h3>
@@ -284,6 +369,13 @@
                 </div>
             `;
             logContainer.prepend(entry);
+        }
+
+        function calcTotalReceived() {
+            const start = parseFloat(document.getElementById('meter-start').value) || 0;
+            const end = parseFloat(document.getElementById('meter-end').value) || 0;
+            const total = end > start ? end - start : 0;
+            document.getElementById('meter-total').value = total.toLocaleString('pt-BR');
         }
 
         function exportReport() {
