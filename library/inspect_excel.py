@@ -1,7 +1,7 @@
 import openpyxl
 import os
 
-excel_name = "Tabelas_Sondagem_SMIT_CRAO.xlsx"
+excel_name = "Tabelas_Sondagem_SMIT_CARAJA.xlsx"
 
 if os.path.exists(excel_name):
     try:

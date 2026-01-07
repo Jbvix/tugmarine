@@ -1,7 +1,7 @@
 import pypdf
 import os
 
-pdf_name = "Tabela de Sondagem - Trim_Crao_Caraja_Charrua_Caiapo_Caripuna_OCR.pdf"
+pdf_name = "SONDAGEM CARAJA .pdf"
 
 print("CWD:", os.getcwd())
 print("Files in CWD:")
