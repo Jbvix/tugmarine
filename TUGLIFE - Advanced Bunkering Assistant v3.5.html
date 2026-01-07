@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUGLIFE - Advanced Bunkering Assistant v3.5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mono { font-family: 'JetBrains+Mono', monospace; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* Gráfico do Tanque */
+        .tank-vessel-viz {
+            width: 45px;
+            height: 110px;
+            background: #0f172a;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #334155;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .layer-rob {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, #1e40af, #3b82f6);
+            z-index: 10;
+            transition: height 1s ease;
+        }
+
+        .layer-bunker {
+            position: absolute;
+            width: 100%;
+            background: linear-gradient(to top, #065f46, #10b981);
+            z-index: 5;
+            transition: bottom 1s ease, height 1s ease;
+        }
+
+        .safety-line {
+            position: absolute;
+            top: 5%;
+            width: 100%;
+            height: 1px;
+            border-top: 1px dashed rgba(239, 68, 68, 0.6);
+            z-index: 20;
+        }
+
+        .check-pill {
+            transition: all 0.3s ease;
+        }
+        input:checked + .check-pill {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 pb-24">
+
+    <main class="max-w-2xl mx-auto space-y-4">
+        
+        <header class="text-center py-4 border-b border-slate-800 mb-6">
+            <h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Tuglife <span class="text-emerald-500">Bunkering</span></h1>
+            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.4em] mt-1">Full Inventory v3.5</p>
+        </header>
+
+        <!-- Identificação -->
+        <section class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input type="text" id="id-rebocador" placeholder="REBOCADOR" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs uppercase outline-none focus:ring-1 focus:ring-blue-500 text-white font-bold transition-all">
+                <select id="select-classe" onchange="buildInputs()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer font-bold">
+                    <option value="A">Classe A (ASD 2411)</option>
+                    <option value="T">Classe T (Rampart 2500)</option>
+                    <option value="C">Classe C (Canindé/Cascos)</option>
+                    <option value="P">Classe P</option>
+                    <option value="LH1500">Classe LH1500</option>
+                    <option value="CHILE">Chile & Holanda</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Configuração -->
+        <section class="glass-card rounded-3xl p-6 space-y-4">
+            <h2 class="text-xs font-black text-white uppercase tracking-widest flex items-center mb-4">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
+                Selecione os Tanques para Carga
+            </h2>
+            <div id="container-inputs" class="grid grid-cols-1 gap-3"></div>
+            <button onclick="calcularAbastecimento()" class="w-full bg-emerald-600 hover:bg-emerald-500 p-5 rounded-2xl font-black text-sm uppercase shadow-lg shadow-emerald-900/20 active:scale-95 transition-all mt-4 text-white tracking-widest border border-emerald-400/20">
+                Gerar Plano de Distribuição
+            </button>
+        </section>
+
+        <!-- Resultados -->
+        <div id="results-area" class="hidden space-y-4">
+            <section class="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
+                <p class="text-[10px] uppercase font-black opacity-80 tracking-widest mb-2">Total Consolidado (5000L)</p>
+                <div class="flex items-baseline space-x-2">
+                    <span id="res-total-lts" class="text-6xl font-black mono tracking-tighter">0</span>
+                    <span class="text-xl font-bold opacity-60 uppercase">Lts</span>
+                </div>
+                <div id="res-truck-info" class="mt-4 p-3 bg-black/20 rounded-xl text-[10px] font-black uppercase border border-white/10 text-center"></div>
+            </section>
+
+            <div id="container-distribution" class="space-y-4"></div>
+
+            <button onclick="enviarPlanoWhatsApp()" class="w-full bg-green-600 p-5 rounded-2xl font-black text-xs uppercase tracking-widest text-white shadow-xl active:scale-95 transition-all flex justify-center items-center space-x-2">
+                <span>Enviar para Equipa de Convés</span>
+            </button>
+        </div>
+
+        <footer class="py-10 text-center space-y-2">
+            <p class="text-[8px] font-black text-slate-600 uppercase tracking-[0.4em]">Jossian Brito | 2026 | Tuglife Marine</p>
+        </footer>
+
+    </main>
+
+    <script>
+        /**
+         * SOFTWARE: TUGLIFE BUNKERING ASSISTANT
+         * AUTOR: Jossian Brito | DATA: 06/01/2026 | VERSÃO: 3.5
+         */
+
+        const db = {
+            "A": { tks: { 
+                "TK4": { n: "TK4 Header", c: 2825, u: "cm", t: [{s:0,v:729},{s:260,v:2825}] },
+                "TK5": { n: "TK5 Header", c: 2825, u: "cm", t: [{s:0,v:729},{s:260,v:2825}] },
+                "TK6": { n: "F.O. PS", c: 24286, u: "cm", t: [{s:0,v:1101},{s:260,v:24286}] }, 
+                "TK7": { n: "F.O. SB", c: 24286, u: "cm", t: [{s:0,v:1133},{s:260,v:24286}] },
+                "TK11": { n: "F.O. Aft PS", c: 11621, u: "cm", t: [{s:0,v:22},{s:250,v:11621}] },
+                "TK12": { n: "F.O. Aft SB", c: 14827, u: "cm", t: [{s:0,v:62},{s:250,v:14827}] }
+            } },
+            "T": { tks: { 
+                "DIARIO_BB": { n: "Diário BB", c: 7921, u: "mm", t: [{s:0,v:188},{s:2000,v:7921}] },
+                "DIARIO_BE": { n: "Diário BE", c: 7921, u: "mm", t: [{s:0,v:188},{s:2000,v:7921}] },
+                "ARM_BB": { n: "Lateral BB", c: 8314, u: "mm", t: [{s:0,v:14},{s:1240,v:8314}] },
+                "ARM_BE": { n: "Lateral BE", c: 8314, u: "mm", t: [{s:0,v:14},{s:1240,v:8314}] },
+                "CTL": { n: "Central", c: 38074, u: "mm", t: [{s:0,v:2678},{s:1220,v:38074}] }
+            } },
+            "C": { tks: { 
+                "FODAY.P": { n: "Diário BB", c: 22623, u: "mm", t: [{s:0,v:132},{s:2900,v:22623}] },
+                "FODAY.S": { n: "Diário BE", c: 22623, u: "mm", t: [{s:0,v:132},{s:2900,v:22623}] },
+                "FO_AFT.P": { n: "Lateral BB", c: 21254, u: "mm", t: [{s:0,v:4},{s:2248,v:21254}] },
+                "FO_AFT.S": { n: "Lateral BE", c: 21254, u: "mm", t: [{s:0,v:4},{s:2248,v:21254}] },
+                "FO_DB.P": { n: "DF BB", c: 30231, u: "mm", t: [{s:0,v:39},{s:3200,v:30231}] },
+                "FO_DB.S": { n: "DF BE", c: 30231, u: "mm", t: [{s:0,v:39},{s:3200,v:30231}] },
+                "FO_DB.C": { n: "DF Central", c: 44451, u: "mm", t: [{s:0,v:0},{s:2493,v:44451}] }
+            } },
+            "P": { tks: {
+                "DIARIO_BB": { n: "Diário BB", c: 10355, u: "mm", t: [{s:0,v:263},{s:2000,v:7959}] },
+                "DIARIO_BE": { n: "Diário BE", c: 10355, u: "mm", t: [{s:0,v:263},{s:2000,v:7959}] },
+                "DF_BB": { n: "DF BB", c: 8300, u: "mm", t: [{s:0,v:15},{s:1000,v:5724}] },
+                "DF_BE": { n: "DF BE", c: 8300, u: "mm", t: [{s:0,v:15},{s:1000,v:5724}] },
+                "DF_CENTRAL": { n: "DF Central", c: 39286, u: "mm", t: [{s:0,v:413},{s:1000,v:26371}] }
+            } },
+            "LH1500": { tks: {
+                "TQ4CT": { n: "T4 Central", c: 38312, u: "mm", t: [{s:0,v:0.6},{s:140,v:38312}] },
+                "TQ4BB": { n: "T4 BB", c: 22390, u: "mm", t: [{s:0,v:960},{s:110,v:22390}] },
+                "TQ4BE": { n: "T4 BE", c: 22390, u: "mm", t: [{s:0,v:960},{s:110,v:22390}] },
+                "TQ06": { n: "T06", c: 51295, u: "mm", t: [{s:0,v:73},{s:400,v:47385}] }
+            } },
+            "CHILE": { tks: {
+                "TK1_BB": { n: "TK1 BB", c: 9203, u: "cm", t: [{s:0,v:17},{s:200,v:3216}] },
+                "TK1_BE": { n: "TK1 BE", c: 9203, u: "cm", t: [{s:0,v:17},{s:200,v:3216}] },
+                "TK2_CTL": { n: "TK2 Central", c: 12315, u: "cm", t: [{s:0,v:1225},{s:300,v:3888}] },
+                "TK6_BB": { n: "TK6 BB", c: 13981, u: "cm", t: [{s:0,v:6},{s:220,v:13981}] }
+            } }
+        };
+
+        let bunkerState = { total: 0, list: [] };
+        const linear = (x, x1, y1, x2, y2) => (x1 === x2) ? y1 : y1 + (x - x1) * ((y2 - y1) / (x2 - x1));
+
+        function getV(sCM, tank) {
+            const sVal = tank.u === 'mm' ? sCM * 10 : sCM;
+            const t = tank.t;
+            if (sVal <= t[0].s) return t[0].v;
+            if (sVal >= t[t.length-1].s) return t[t.length-1].v;
+            for(let i=0; i<t.length-1; i++) if(sVal >= t[i].s && sVal <= t[i+1].s) return linear(sVal, t[i].s, t[i].v, t[i+1].s, t[i+1].v);
+            return 0;
+        }
+
+        function getS(volume, tank) {
+            const t = tank.t;
+            let sLeit = 0;
+            if (volume <= t[0].v) sLeit = t[0].s;
+            else if (volume >= t[t.length-1].v) sLeit = t[t.length-1].s;
+            else {
+                for(let i=0; i<t.length-1; i++) {
+                    if(volume >= t[i].v && volume <= t[i+1].v) {
+                        sLeit = linear(volume, t[i].v, t[i].s, t[i+1].v, t[i+1].s);
+                        break;
+                    }
+                }
+            }
+            return tank.u === 'mm' ? sLeit / 10 : sLeit;
+        }
+
+        function buildInputs() {
+            const cK = document.getElementById('select-classe').value;
+            const cont = document.getElementById('container-inputs');
+            cont.innerHTML = '';
+            Object.keys(db[cK].tks).forEach(id => {
+                cont.innerHTML += `
+                <div class="p-4 bg-slate-900 border border-slate-700 rounded-2xl flex items-center justify-between shadow-sm">
+                    <div class="flex items-center space-x-3">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="checkbox" data-id="${id}" class="tank-selector hidden" checked onchange="toggleCheck(this)">
+                            <div class="check-pill w-10 h-6 bg-slate-700 rounded-full border-2 border-slate-600 flex items-center p-0.5 transition-all">
+                                <div class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform translate-x-0"></div>
+                            </div>
+                        </label>
+                        <span class="text-[10px] font-black uppercase text-slate-400">${db[cK].tks[id].n}</span>
+                    </div>
+                    <input type="number" data-id="${id}" value="0" step="0.1" class="b-input w-24 bg-slate-800 p-2 rounded-xl text-lg font-black mono text-blue-400 text-right outline-none border border-slate-700">
+                </div>`;
+            });
+            // Ativa visual inicial
+            document.querySelectorAll('.tank-selector').forEach(s => toggleCheck(s));
+        }
+
+        function toggleCheck(el) {
+            const dot = el.nextElementSibling.firstElementChild;
+            if(el.checked) {
+                dot.style.transform = 'translateX(1rem)';
+                el.nextElementSibling.style.backgroundColor = '#10b981';
+            } else {
+                dot.style.transform = 'translateX(0)';
+                el.nextElementSibling.style.backgroundColor = '#334155';
+            }
+        }
+
+        function calcularAbastecimento() {
+            const cK = document.getElementById('select-classe').value;
+            const selectors = document.querySelectorAll('.tank-selector');
+            let totalAvail = 0, states = [];
+
+            selectors.forEach(sel => {
+                if(!sel.checked) return;
+                const id = sel.dataset.id;
+                const input = document.querySelector(`.b-input[data-id="${id}"]`);
+                const tk = db[cK].tks[id];
+                const rob = getV(parseFloat(input.value) || 0, tk);
+                const spare = Math.max(0, (tk.c * 0.95) - rob);
+                const spare50 = Math.floor(spare / 50) * 50; 
+                states.push({ tk, rob, spare: spare50, cap: tk.c });
+                totalAvail += spare50;
+            });
+
+            const targetTotal = Math.floor(totalAvail / 5000) * 5000;
+            if (targetTotal < 5000) { alert("Volume insuficiente (Mínimo 5k)."); return; }
+
+            bunkerState = { total: targetTotal, list: [] };
+            let rem = targetTotal;
+
+            states.forEach(s => {
+                let add = Math.min(rem, s.spare);
+                if (add > 0) {
+                    let fs = getS(s.rob + add, s.tk);
+                    let lotes = Math.floor(add / 5000);
+                    let frac = add % 5000;
+                    bunkerState.list.push({ n: s.tk.n, add, rob: s.rob, cap: s.cap, fs, lotes, frac });
+                }
+                rem -= add;
+            });
+            renderResults();
+        }
+
+        function renderResults() {
+            document.getElementById('results-area').classList.remove('hidden');
+            document.getElementById('res-total-lts').textContent = bunkerState.total.toLocaleString('pt-PT');
+            
+            let trucks = []; let r = bunkerState.total;
+            [30000, 25000, 20000, 15000, 10000].forEach(sz => { while(r >= sz) { trucks.push(sz/1000+"k"); r -= sz; } });
+            document.getElementById('res-truck-info').textContent = "LOGÍSTICA: " + trucks.join(" + ");
+
+            const dist = document.getElementById('container-distribution');
+            dist.innerHTML = bunkerState.list.map(t => {
+                const rH = (t.rob / t.cap) * 100;
+                const bH = (t.add / t.cap) * 100;
+                return `
+                <div class="glass-card p-5 rounded-[2rem] border border-slate-800 flex items-center space-x-6 shadow-xl">
+                    <div class="tank-vessel-viz flex-none">
+                        <div class="safety-line"></div>
+                        <div class="layer-bunker" style="bottom: ${rH}%; height: ${bH}%"></div>
+                        <div class="layer-rob" style="height: ${rH}%"></div>
+                    </div>
+                    <div class="flex-1 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-black uppercase text-white tracking-widest">${t.n}</span>
+                            <div class="text-right">
+                                <span class="block text-xl font-black text-emerald-500 tracking-tighter leading-none">+${t.add.toLocaleString('pt-PT')} L</span>
+                                <span class="text-[8px] font-bold text-slate-500 uppercase mt-1 leading-none">${t.lotes} LOTES 5K ${t.frac > 0 ? '+ '+t.frac+'L' : ''}</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950/50 p-3 rounded-2xl flex justify-between items-center border border-slate-800 shadow-inner">
+                             <span class="text-[9px] text-slate-500 uppercase font-black leading-none">Régua Final</span>
+                             <span class="text-2xl font-black mono text-blue-500 tracking-tighter">${t.fs.toFixed(1)} CM</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function enviarPlanoWhatsApp() {
+            const r = (document.getElementById('id-rebocador')?.value || "REBOCADOR").toUpperCase();
+            let m = `*TUGLIFE - PLANO DE BUNKERING - ${r}*\n*TOTAL:* ${bunkerState.total.toLocaleString('pt-PT')} LTS\n--------------------------\n`;
+            bunkerState.list.forEach(t => {
+                m += `• *${t.n}*\n  - RECEBER: ${t.lotes} lotes de 5k ${t.frac > 0 ? '+ '+t.frac+'L' : ''}\n  - RÉGUA FINAL: ${t.fs.toFixed(1)} cm\n\n`;
+            });
+            window.open(`https://wa.me/?text=${encodeURIComponent(m)}`, '_blank');
+        }
+
+        window.onload = buildInputs;
+    </script>
+</body>
+</html>

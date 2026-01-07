@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual TUGLIFE Marine v1.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .section-card { background: white; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        h2 { font-weight: 900; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.1em; color: #3b82f6; margin-bottom: 1rem; display: flex; align-items: center; }
+        h2::before { content: ""; width: 4px; height: 16px; background: #3b82f6; margin-right: 0.75rem; border-radius: 2px; }
+        p, li { font-size: 0.938rem; line-height: 1.6; color: #475569; }
+        code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-weight: 700; color: #0f172a; }
+    </style>
+</head>
+<body class="p-6 sm:p-12 pb-24">
+
+    <div class="max-w-3xl mx-auto">
+        
+        <header class="mb-12">
+            <a href="index.html" class="text-xs font-black uppercase text-slate-400 hover:text-blue-600 transition-colors flex items-center mb-6">
+                ← Voltar ao Command Center
+            </a>
+            <h1 class="text-4xl font-black uppercase tracking-tighter text-slate-900 leading-none">Manual do <span class="text-blue-600">Utilizador</span></h1>
+            <p class="text-sm font-bold text-slate-500 mt-4 uppercase tracking-widest">Documentação Técnica v1.0 | TUGLIFE Marine</p>
+        </header>
+
+        <!-- Seção 1: Calculadora -->
+        <section class="section-card">
+            <h2>1. Calculadora de Sondagem</h2>
+            <p>Esta ferramenta realiza a interpolação volumétrica baseada nas tabelas de estaleiro (fichas de capacidade).</p>
+            <ul class="list-disc ml-5 mt-4 space-y-2">
+                <li><strong>Entrada de Dados:</strong> Insira sempre a sondagem em <code>CM</code> (Centímetros). O sistema converte automaticamente para milímetros se o tanque exigir.</li>
+                <li><strong>Correção de Trim:</strong> Introduza o Trim em <code>MM</code> (Milímetros). O motor utiliza <strong>Interpolação Bilinear</strong> para projetar o volume exato entre as faixas de trim da tabela.</li>
+                <li><strong>Clamping:</strong> O sistema bloqueia valores acima da capacidade máxima (100% ou 95%) para evitar extrapolação matemática.</li>
+            </ul>
+        </section>
+
+        <!-- Seção 2: Bunkering -->
+        <section class="section-card">
+            <h2>2. Assistente de Bunkering</h2>
+            <p>Módulo logístico avançado para planeamento de abastecimento em lotes de 5000L.</p>
+            <ul class="list-disc ml-5 mt-4 space-y-2">
+                <li><strong>Seleção de Tanques:</strong> Utilize os interruptores (toggles) para definir quais os tanques que participarão na operação.</li>
+                <li><strong>Regra de 50 Litros:</strong> Cada tanque só aceita arredondamentos de <code>50L</code>. Isto garante que a marcação na régua física seja clara.</li>
+                <li><strong>Regra de 5000 Litros:</strong> O total consolidado é arredondado para o lote de caminhão mais próximo (Ex: Se houver espaço para 12.350L, o sistema autoriza 10.000L).</li>
+                <li><strong>Régua Final Alvo:</strong> O valor em <code>CM</code> mostrado no card de resultado é a marca que deve ser atingida após o término do bombeio.</li>
+            </ul>
+        </section>
+
+        <!-- Seção 3: Checklist -->
+        <section class="section-card">
+            <h2>3. Checklist FOR-OPE-009</h2>
+            <p>Conformidade total com as normas de segurança SAAM Towage.</p>
+            <ul class="list-disc ml-5 mt-4 space-y-2">
+                <li><strong>Fluxo de Trabalho:</strong> Preencha as seções "Antes", "Durante" e "Após" sequencialmente.</li>
+                <li><strong>Assinatura Digital:</strong> Utilize o ecrã tátil para assinar nos campos do Comandante e do Chefe de Máquinas.</li>
+                <li><strong>Impressão:</strong> Utilize o botão "Gerar PDF" para criar uma cópia formatada A4 pronta para arquivo ou envio por email.</li>
+            </ul>
+        </section>
+
+        <footer class="text-center pt-12 border-t border-slate-200">
+            <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em]">Jossian Brito | Marine Engineer & Software Dev</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

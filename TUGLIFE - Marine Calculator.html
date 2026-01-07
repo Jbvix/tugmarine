@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUGLIFE - Marine Calculator (Inventário Completo)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mono { font-family: 'JetBrains+Mono', monospace; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 pb-20">
+
+    <main class="max-w-md mx-auto space-y-4">
+        
+        <!-- Header Técnico -->
+        <header class="text-center py-6 border-b border-slate-800">
+            <h1 class="text-2xl font-black uppercase italic tracking-tighter">Tuglife <span class="text-blue-500">Calculator</span></h1>
+            <div class="flex justify-center items-center space-x-2 mt-1">
+                <span class="h-px w-8 bg-slate-700"></span>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em]">Full Inventory v2.5</p>
+                <span class="h-px w-8 bg-slate-700"></span>
+            </div>
+        </header>
+
+        <!-- Seleção de Embarcação e Tanque -->
+        <section class="glass-card rounded-3xl p-5 space-y-4 shadow-xl border border-slate-800">
+            <div class="space-y-3">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-500 ml-1 uppercase">Classe</label>
+                    <select id="select-classe" onchange="refreshTanks()" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer">
+                        <option value="A">Classe A (ASD 2411)</option>
+                        <option value="T">Classe T (Rampart 2500)</option>
+                        <option value="C">Classe C (Canindé / Cascos)</option>
+                        <option value="P">Classe P</option>
+                        <option value="LH1500">Classe LH1500</option>
+                        <option value="CHILE">Chile & Holanda</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-500 ml-1 uppercase">Tanque Selecionado</label>
+                    <select id="select-tanque" onchange="updateCalc()" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer"></select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inputs de Medição -->
+        <section class="glass-card rounded-3xl p-5 space-y-4 shadow-xl border border-slate-800">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1 text-center">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none block mb-2">Sondagem (cm)</label>
+                    <input type="number" id="input-sondagem" oninput="updateCalc()" placeholder="0.0" step="0.1" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-3xl font-black text-blue-500 outline-none text-center shadow-inner">
+                </div>
+                <div class="space-y-1 text-center">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none block mb-2">Trim (mm)</label>
+                    <input type="number" id="input-trim" value="0" step="10" oninput="updateCalc()" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-3xl font-black text-orange-500 outline-none text-center shadow-inner">
+                </div>
+            </div>
+        </section>
+
+        <!-- Resultados -->
+        <section class="bg-gradient-to-br from-blue-700 to-blue-900 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
+            <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
+            
+            <div class="relative z-10">
+                <p class="text-blue-100 text-[10px] uppercase font-black tracking-widest mb-1 opacity-70">Volume Resultante</p>
+                <div class="flex items-baseline space-x-2">
+                    <span id="res-volume" class="text-7xl font-black mono tracking-tighter text-white glow-text leading-none">0</span>
+                    <span class="text-blue-100 font-bold text-2xl opacity-60 uppercase">Lts</span>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-end">
+                    <div class="space-y-1">
+                        <span class="block text-[10px] font-black text-blue-200 uppercase opacity-60">Percentual do Tanque</span>
+                        <div class="flex items-baseline space-x-1">
+                            <span id="res-pct" class="text-3xl font-black text-white leading-none">0.0</span>
+                            <span class="text-blue-200 font-bold text-sm">%</span>
+                        </div>
+                    </div>
+                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center p-2">
+                         <div class="w-full h-full bg-slate-900/50 rounded-lg relative overflow-hidden border border-white/10">
+                            <div id="tank-fill" class="absolute bottom-0 left-0 w-full bg-blue-400 transition-all duration-1000 ease-out" style="height: 0%"></div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-10 text-center space-y-2 no-print">
+            <p class="text-[8px] font-black text-slate-600 uppercase tracking-[0.4em]">Jossian Brito | Tuglife Marine Tool</p>
+            <p class="text-[8px] font-bold text-slate-700 uppercase">Year 2026 | Full Inventory Integration</p>
+        </footer>
+
+    </main>
+
+    <script>
+        /**
+         * SOFTWARE: TUGLIFE CALCULATOR (MÓDULO DE ROTINA)
+         * AUTOR: Jossian Brito | DATA: 06/01/2026 | VERSÃO: 2.5
+         * MODIFICAÇÕES: 
+         * - Implementação de todos os tanques do inventário por classe.
+         * - Integração de capacidades nominais extraídas dos planos de capacidade.
+         * - Motor de interpolação bilinear universal (Sondagem + Trim).
+         */
+
+        const linear = (x, x1, y1, x2, y2) => (x1 === x2) ? y1 : y1 + (x - x1) * ((y2 - y1) / (x2 - x1));
+
+        const db = {
+            "A": { 
+                name: "Classe A (ASD 2411)", 
+                tanques: { 
+                    "TK4": { nome: "TK4 Fuel Oil Header", cap: 2825, u: "cm", t: { "0": [{s:0,v:729},{s:220,v:2601},{s:260,v:2825}] } },
+                    "TK5": { nome: "TK5 Fuel Oil Header", cap: 2825, u: "cm", t: { "0": [{s:0,v:729},{s:220,v:2601},{s:260,v:2825}] } },
+                    "TK6": { nome: "TK6 Fuel Oil PS", cap: 24286, u: "cm", t: { "0": [{s:0,v:1101},{s:100,v:14230},{s:260,v:24286}] } },
+                    "TK7": { nome: "TK7 Fuel Oil SB", cap: 24286, u: "cm", t: { "0": [{s:0,v:1133},{s:100,v:14300},{s:260,v:24286}] } },
+                    "TK11": { nome: "TK11 Fuel Oil Aft PS", cap: 11621, u: "cm", t: { "0": [{s:0,v:22},{s:100,v:3742},{s:250,v:11621}] } },
+                    "TK12": { nome: "TK12 Fuel Oil Aft SB", cap: 14827, u: "cm", t: { "0": [{s:0,v:62},{s:100,v:4989},{s:250,v:14827}] } }
+                } 
+            },
+            "T": { 
+                name: "Classe T (Rampart 2500)", 
+                tanques: { 
+                    "DIARIO_BB": { nome: "Diário BB", cap: 7921, u: "mm", t: { "0": [{s:0,v:188},{s:100,v:565},{s:1000,v:4032},{s:2000,v:7921}] } },
+                    "DIARIO_BE": { nome: "Diário BE", cap: 7921, u: "mm", t: { "0": [{s:0,v:188},{s:100,v:565},{s:1000,v:4032},{s:2000,v:7921}] } },
+                    "LATERAL_BB": { nome: "Lateral BB", cap: 8314, u: "mm", t: { "0": [{s:0,v:14},{s:100,v:95},{s:1000,v:6080},{s:1240,v:8314}] } },
+                    "LATERAL_BE": { nome: "Lateral BE", cap: 8314, u: "mm", t: { "0": [{s:0,v:14},{s:100,v:95},{s:1000,v:6080},{s:1240,v:8314}] } },
+                    "CENTRAL": { nome: "Central", cap: 38074, u: "mm", t: { "0": [{s:0,v:2678},{s:1000,v:31000},{s:1220,v:38074}] } }
+                } 
+            },
+            "C": { 
+                name: "Classe C", 
+                tanques: { 
+                    "FODAY.P": { nome: "Diário BB", cap: 22623, u: "mm", t: { "0": [{s:0,v:132},{s:2500,v:20062},{s:2900,v:22623}] } },
+                    "FODAY.S": { nome: "Diário BE", cap: 22623, u: "mm", t: { "0": [{s:0,v:132},{s:2500,v:20062},{s:2900,v:22623}] } },
+                    "FO_AFT.P": { nome: "Lateral BB", cap: 21254, u: "mm", t: { "0": [{s:0,v:4},{s:2200,v:20524},{s:2248,v:21254}] } },
+                    "FO_AFT.S": { nome: "Lateral BE", cap: 21254, u: "mm", t: { "0": [{s:0,v:4},{s:2200,v:20524},{s:2248,v:21254}] } },
+                    "FO_DB.P": { nome: "Duplo Fundo BB", cap: 30231, u: "mm", t: { "0": [{s:0,v:39},{s:3005,v:19828},{s:3200,v:30231}] } },
+                    "FO_DB.BE": { nome: "Duplo Fundo BE", cap: 30231, u: "mm", t: { "0": [{s:0,v:39},{s:3200,v:26584}] } },
+                    "FO_DB.C": { nome: "Duplo Fundo Central", cap: 44451, u: "mm", t: { "0": [{s:0,v:0},{s:2400,v:39924},{s:2493,v:44451}] } },
+                    "FRESH_W.P": { nome: "Água Doce BB", cap: 13248, u: "mm", t: { "0": [{s:0,v:8},{s:1000,v:330},{s:4400,v:13248}] } },
+                    "FRESH_W.S": { nome: "Água Doce BE", cap: 13248, u: "mm", t: { "0": [{s:0,v:8},{s:1000,v:330},{s:4400,v:13248}] } }
+                } 
+            },
+            "P": {
+                name: "Classe P",
+                tanques: {
+                    "DIARIO_BB": { nome: "Diário BB", cap: 10355, u: "mm", t: { "0": [{s:0,v:263},{s:2000,v:7959}] } },
+                    "DIARIO_BE": { nome: "Diário BE", cap: 10355, u: "mm", t: { "0": [{s:0,v:263},{s:2000,v:7959}] } },
+                    "DF_BB": { nome: "DF BB", cap: 8300, u: "mm", t: { "0": [{s:0,v:15},{s:1000,v:5724}] } },
+                    "DF_BE": { nome: "DF BE", cap: 8300, u: "mm", t: { "0": [{s:0,v:15},{s:1000,v:5724}] } },
+                    "DF_CENTRAL": { nome: "DF Central", cap: 39286, u: "mm", t: { "0": [{s:0,v:413},{s:1000,v:26371}] } }
+                }
+            },
+            "LH1500": {
+                name: "Classe LH1500",
+                tanques: {
+                    "TQ4CT": { nome: "T4 Central", cap: 38312, u: "mm", t: { "0": [{s:0,v:0.6},{s:130,v:34971},{s:140,v:38312}] } },
+                    "TQ4BB": { nome: "T4 BB", cap: 22390, u: "mm", t: { "0": [{s:0,v:960},{s:110,v:22390}] } },
+                    "TQ4BE": { nome: "T4 BE", cap: 22390, u: "mm", t: { "0": [{s:0,v:960},{s:110,v:22390}] } },
+                    "TQ06": { nome: "T06", cap: 51295, u: "mm", t: { "0": [{s:0,v:73},{s:400,v:47385}] } },
+                    "SERVICO": { nome: "Serviço", cap: 7680, u: "mm", t: { "0": [{s:0,v:0},{s:100,v:7680}] } }
+                }
+            },
+            "CHILE": {
+                name: "Chile / Holanda",
+                tanques: {
+                    "TK1_BB": { nome: "TK1 BB", cap: 9203, u: "cm", t: { "0": [{s:0,v:17},{s:200,v:3216}] } },
+                    "TK1_BE": { nome: "TK1 BE", cap: 9203, u: "cm", t: { "0": [{s:0,v:17},{s:200,v:3216}] } },
+                    "TK2_CENTRAL": { nome: "TK2 Central", cap: 12315, u: "cm", t: { "0": [{s:0,v:1225},{s:300,v:3888}] } },
+                    "TK6_BB": { nome: "TK6 BB", cap: 13981, u: "cm", t: { "0": [{s:0,v:6},{s:220,v:13981}] } },
+                    "TK6_BE": { nome: "TK6 BE", cap: 11694, u: "cm", t: { "0": [{s:0,v:8},{s:220,v:11694}] } }
+                }
+            }
+        };
+
+        function getVolume1D(val, table) {
+            if (val <= table[0].s) return table[0].v;
+            if (val >= table[table.length - 1].s) return table[table.length - 1].v;
+            for (let i = 0; i < table.length - 1; i++) {
+                if (val >= table[i].s && val <= table[i+1].s) {
+                    return linear(val, table[i].s, table[i].v, table[i+1].s, table[i+1].v);
+                }
+            }
+            return 0;
+        }
+
+        function calculateBilinear(sVal, tVal, trimMap) {
+            const trimKeys = Object.keys(trimMap).map(Number).sort((a, b) => a - b);
+            if (trimKeys.length === 1) return getVolume1D(sVal, trimMap[trimKeys[0]]);
+            if (tVal <= trimKeys[0]) return getVolume1D(sVal, trimMap[trimKeys[0]]);
+            if (tVal >= trimKeys[trimKeys.length - 1]) return getVolume1D(sVal, trimMap[trimKeys[trimKeys.length - 1]]);
+
+            for (let i = 0; i < trimKeys.length - 1; i++) {
+                const t1 = trimKeys[i];
+                const t2 = trimKeys[i + 1];
+                if (tVal >= t1 && tVal <= t2) {
+                    const v1 = getVolume1D(sVal, trimMap[t1]);
+                    const v2 = getVolume1D(sVal, trimMap[t2]);
+                    return linear(tVal, t1, v1, t2, v2);
+                }
+            }
+            return 0;
+        }
+
+        function refreshTanks() {
+            const cK = document.getElementById('select-classe').value;
+            const sel = document.getElementById('select-tanque');
+            if(!sel) return;
+            
+            sel.innerHTML = '';
+            Object.keys(db[cK].tanques).forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k;
+                opt.textContent = db[cK].tanques[k].nome;
+                sel.appendChild(opt);
+            });
+            updateCalc();
+        }
+
+        function updateCalc() {
+            const cK = document.getElementById('select-classe').value;
+            const tK = document.getElementById('select-tanque').value;
+            const tank = db[cK]?.tanques[tK];
+            if (!tank) return;
+
+            const sCM = parseFloat(document.getElementById('input-sondagem').value) || 0;
+            const tMM = parseFloat(document.getElementById('input-trim').value) || 0;
+
+            const sNormalized = tank.u === 'mm' ? sCM * 10 : sCM;
+            const volumeFinal = calculateBilinear(sNormalized, tMM, tank.t);
+            const pct = (volumeFinal / tank.cap) * 100;
+
+            const elVol = document.getElementById('res-volume');
+            const elPct = document.getElementById('res-pct');
+            const elFill = document.getElementById('tank-fill');
+
+            if (elVol) elVol.textContent = Math.round(volumeFinal).toLocaleString('pt-BR');
+            if (elPct) elPct.textContent = pct.toFixed(1);
+            if (elFill) elFill.style.height = `${Math.min(pct, 100)}%`;
+        }
+
+        function syncFields(id) {
+            // Placeholder para futura sincronização com outras telas modulares
+        }
+
+        window.onload = refreshTanks;
+
+    </script>
+</body>
+</html>

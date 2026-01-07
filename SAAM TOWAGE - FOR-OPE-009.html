@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAAM TOWAGE - FOR-OPE-009</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .print-area {
+            background: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .print-area { box-shadow: none; border: 1px solid #000; padding: 10mm; margin: 0; width: 100%; }
+            input[type="text"], input[type="time"], input[type="date"], textarea { border-bottom: 1px solid #000 !important; border-top:none; border-left:none; border-right:none; }
+        }
+
+        .sig-canvas {
+            background: #f1f5f9;
+            border: 1px dashed #94a3b8;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        .radio-custom {
+            width: 16px;
+            height: 16px;
+            accent-color: #000;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- Ações no Topo (Não Imprime) -->
+    <div class="max-w-4xl mx-auto flex justify-between items-center mb-6 no-print">
+        <a href="index.html" class="text-xs font-bold text-slate-500 uppercase flex items-center hover:text-blue-600 transition-colors">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Voltar
+        </a>
+        <button onclick="window.print()" class="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl hover:bg-blue-900 transition-all flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>Gerar PDF / Imprimir</span>
+        </button>
+    </div>
+
+    <!-- ÁREA DO FORMULÁRIO -->
+    <main class="max-w-4xl mx-auto print-area p-6 sm:p-12 rounded-3xl space-y-8">
+        
+        <!-- Cabeçalho -->
+        <div class="border-b-4 border-slate-900 pb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-6">
+                <div class="flex flex-col items-center">
+                    <span class="font-black text-3xl italic leading-none">saam</span>
+                    <span class="font-bold text-[10px] tracking-[0.3em] uppercase leading-none">towage</span>
+                </div>
+                <div class="w-px h-12 bg-slate-300 hidden sm:block"></div>
+                <div>
+                    <h1 class="text-xl font-black uppercase tracking-tight">Lista de Verificação</h1>
+                    <p class="text-xs font-bold text-slate-600">Recebimento de Óleo</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-[10px] font-bold border border-slate-200 p-3 bg-slate-50 rounded-xl">
+                <p>Identificação: <span class="font-black">FOR-OPE-009</span></p>
+                <p>Revisão: <span class="font-black">03</span></p>
+                <p>Data: <span class="font-black">09/04/2025</span></p>
+                <p>Página: <span class="font-black">1 de 2</span></p>
+            </div>
+        </div>
+
+        <!-- Metadados da Operação -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-[10px] font-black uppercase">
+            <div class="col-span-2 space-y-1 border-b border-slate-200">
+                <label class="text-slate-500">Filial:</label>
+                <input type="text" id="filial" class="w-full p-1 outline-none bg-transparent">
+            </div>
+            <div class="col-span-2 space-y-1 border-b border-slate-200">
+                <label class="text-slate-500">Rebocador:</label>
+                <input type="text" id="rebocador" class="w-full p-1 outline-none bg-transparent">
+            </div>
+            <div class="space-y-1 border-b border-slate-200">
+                <label class="text-slate-500">Horário Início:</label>
+                <input type="time" class="w-full p-1 outline-none bg-transparent">
+            </div>
+            <div class="space-y-1 border-b border-slate-200">
+                <label class="text-slate-500">Data:</label>
+                <input type="date" class="w-full p-1 outline-none bg-transparent">
+            </div>
+            <div class="space-y-1 border-b border-slate-200">
+                <label class="text-slate-500">Nº da PT:</label>
+                <input type="text" placeholder="____/2026" class="w-full p-1 outline-none bg-transparent">
+            </div>
+            <div class="space-y-1">
+                <label class="text-slate-500">Atividade por:</label>
+                <div class="flex space-x-4 pt-1">
+                    <label class="flex items-center"><input type="radio" name="via" class="mr-1 radio-custom"> Gravidade</label>
+                    <label class="flex items-center"><input type="radio" name="via" class="mr-1 radio-custom"> Bomba</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Tipo de Operação -->
+        <div class="bg-slate-900 text-white p-3 text-[10px] font-black uppercase border border-slate-900 rounded-xl flex flex-wrap gap-8 items-center">
+            <span class="text-blue-400 italic">Natureza da Operação:</span>
+            <label class="flex items-center"><input type="radio" name="ope" class="mr-2"> Abastecimento</label>
+            <label class="flex items-center"><input type="radio" name="ope" class="mr-2"> Transferência entre Embarcações</label>
+            <label class="flex items-center"><input type="radio" name="ope" class="mr-2"> Retirada de Resíduo</label>
+        </div>
+
+        <!-- BLOCOS DE VERIFICAÇÃO -->
+        <div class="space-y-6">
+            <!-- ANTES -->
+            <section>
+                <h3 class="bg-slate-200 p-2 text-[11px] font-black uppercase italic tracking-widest border-l-4 border-slate-900">1. Antes do Início do Recebimento ou Transferência</h3>
+                <div id="items-before" class="divide-y divide-slate-100 border-x border-slate-100"></div>
+                <div class="p-3 bg-amber-50 border border-amber-100 text-[10px] font-bold rounded-b-xl">
+                    Observação: Tanques sondados antes do início? Quantidade Total: <input type="text" placeholder="TOTAL LTS" class="w-32 border-b border-slate-400 bg-transparent px-2 outline-none">
+                </div>
+            </section>
+
+            <!-- DURANTE -->
+            <section>
+                <h3 class="bg-slate-200 p-2 text-[11px] font-black uppercase italic tracking-widest border-l-4 border-slate-900">2. Durante o Recebimento ou Transferência</h3>
+                <div id="items-during" class="divide-y divide-slate-100 border-x border-slate-100"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0 border border-slate-200 text-[10px] font-bold">
+                    <div class="p-4 border-r border-slate-200 space-y-3">
+                        <p class="uppercase">Vazamento identificado na água ao redor do rebocador?</p>
+                        <div class="flex space-x-6">
+                            <label class="flex items-center"><input type="radio" name="vaz" class="mr-2 radio-custom"> SIM</label>
+                            <label class="flex items-center"><input type="radio" name="vaz" class="mr-2 radio-custom"> NÃO</label>
+                        </div>
+                        <div class="flex gap-4 pt-2 text-[9px]">
+                            <span>Horário: <input type="time" class="border-b border-slate-300 outline-none"></span>
+                            <span>Quantidade Estimada: <input type="text" placeholder="LTS" class="border-b border-slate-300 outline-none w-20 px-1"></span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 space-y-3">
+                        <p class="uppercase">O Kit SOPEP foi utilizado?</p>
+                        <div class="flex flex-col space-y-2">
+                            <label class="flex items-center"><input type="radio" name="sop" class="mr-2 radio-custom"> TOTAL</label>
+                            <label class="flex items-center"><input type="radio" name="sop" class="mr-2 radio-custom"> PARCIAL</label>
+                            <label class="flex items-center"><input type="radio" name="sop" class="mr-2 radio-custom"> N/A (Não Identificado Vazamento)</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- APÓS -->
+            <section>
+                <h3 class="bg-slate-200 p-2 text-[11px] font-black uppercase italic tracking-widest border-l-4 border-slate-900">3. Após o Recebimento ou Transferência</h3>
+                <div id="items-after" class="divide-y divide-slate-100 border-x border-slate-100"></div>
+                <div class="p-3 bg-blue-50 border border-blue-100 text-[10px] font-bold rounded-b-xl">
+                    Observação: Quantidade Final Sondada: <input type="text" placeholder="TOTAL LTS" class="w-32 border-b border-slate-400 bg-transparent px-2 outline-none">
+                </div>
+            </section>
+        </div>
+
+        <div class="bg-red-50 border-l-4 border-red-600 p-4 text-[10px] font-black italic text-red-700">
+            "Se algum item estiver em desconformidade, a atividade será suspensa ou iniciada somente após a devida correção".
+        </div>
+
+        <!-- ENCERRAMENTO E ASSINATURAS -->
+        <div class="border-2 border-slate-900 p-6 rounded-3xl space-y-10 bg-slate-50">
+            <div class="flex justify-between items-center text-xs font-black uppercase border-b border-slate-200 pb-4">
+                <div>Horário de Término: <input type="time" class="border-b border-black outline-none ml-2 bg-transparent"></div>
+                <div>Data: <input type="date" class="border-b border-black outline-none ml-2 bg-transparent"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div class="flex flex-col items-center">
+                    <canvas id="sig-com" class="sig-canvas w-full h-32 rounded-2xl shadow-inner"></canvas>
+                    <div class="w-full flex space-x-2 mt-4 no-print">
+                        <button onclick="clearSig('sig-com')" class="text-[9px] bg-slate-200 px-4 py-2 rounded-xl font-bold hover:bg-slate-300">Zerar</button>
+                        <input type="text" id="input-com" oninput="syncName('input-com', 'p-com')" placeholder="NOME DO COMANDANTE" class="flex-1 text-[10px] font-bold p-2 border-b border-slate-300 outline-none uppercase bg-transparent">
+                    </div>
+                    <p class="print-only hidden text-[11px] font-black text-center border-t-2 border-black pt-2 w-full mt-8" id="p-com"></p>
+                    <p class="text-[9px] font-bold uppercase text-slate-400 mt-2 no-print">Assinatura: Comandante</p>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <canvas id="sig-chf" class="sig-canvas w-full h-32 rounded-2xl shadow-inner"></canvas>
+                    <div class="w-full flex space-x-2 mt-4 no-print">
+                        <button onclick="clearSig('sig-chf')" class="text-[9px] bg-slate-200 px-4 py-2 rounded-xl font-bold hover:bg-slate-300">Zerar</button>
+                        <input type="text" id="input-chf" oninput="syncName('input-chf', 'p-chf')" placeholder="NOME DO CHEFE DE MÁQUINAS" class="flex-1 text-[10px] font-bold p-2 border-b border-slate-300 outline-none uppercase bg-transparent">
+                    </div>
+                    <p class="print-only hidden text-[11px] font-black text-center border-t-2 border-black pt-2 w-full mt-8" id="p-chf"></p>
+                    <p class="text-[9px] font-bold uppercase text-slate-400 mt-2 no-print">Assinatura: Chefe de Máquinas</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-[9px] text-slate-400 font-bold uppercase py-6 border-t border-slate-100">
+            Jossian Brito | 2026-01-06 | TUGLIFE Marine Tool
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * SOFTWARE: TUGLIFE SAFETY COMPLIANCE (FOR-OPE-009)
+         * AUTOR: Jossian Brito | VERSÃO: 2.3 | DATA: 06/01/2026
+         * MODIFICAÇÕES: 
+         * - Implementação completa do checklist baseado no PDF oficial.
+         * - Adicionados campos de vazamento e kit SOPEP.
+         * - Motor de assinatura dual e layout de impressão A4.
+         */
+
+        const checklistConfig = [
+            { id: "b1", stage: "before", label: "A amostra de óleo foi colhida antes do início e identificada (FOR-OPE-011)?" },
+            { id: "b2", stage: "before", label: "O aterramento do caminhão-tanque ou barcaça foi efetuado antes de iniciar a atividade?" },
+            { id: "b3", stage: "before", label: "O Kit SOPEP está disponível para uso, caso necessário, no local da atividade?" },
+            { id: "b4", stage: "before", label: "Outras atividades em simultâneo a bordo foram encerradas e a tripulação está atenta?" },
+            { id: "b5", stage: "before", label: "Não foram identificadas atividades a quente nas proximidades da embarcação e caminhão?" },
+            { id: "b6", stage: "before", label: "Foi conferida a amarração do rebocador?" },
+            { id: "b7", stage: "before", label: "A barreira de contenção está corretamente posicionada?" },
+            { id: "d1", stage: "during", label: "As conexões, mangotes, válvulas e equipamentos estão OK?" },
+            { id: "a1", stage: "after", label: "As conexões de bordo foram desfeitas?" },
+            { id: "a2", stage: "after", label: "As quantidades de fornecimento e recebimento estão coerentes?" }
+        ];
+
+        function buildChecklist() {
+            const containers = {
+                before: document.getElementById('items-before'),
+                during: document.getElementById('items-during'),
+                after: document.getElementById('items-after')
+            };
+
+            checklistConfig.forEach(item => {
+                const html = `
+                    <div class="flex justify-between items-center p-3 hover:bg-slate-50 transition-colors">
+                        <span class="text-[10px] font-bold text-slate-800 pr-8 leading-tight uppercase">${item.label}</span>
+                        <div class="flex space-x-3 text-[10px] font-black">
+                            <label class="flex flex-col items-center cursor-pointer"><input type="radio" name="${item.id}" class="radio-custom">SIM</label>
+                            <label class="flex flex-col items-center cursor-pointer"><input type="radio" name="${item.id}" class="radio-custom">NÃO</label>
+                            <label class="flex flex-col items-center cursor-pointer"><input type="radio" name="${item.id}" class="radio-custom">N/A</label>
+                        </div>
+                    </div>
+                `;
+                if(containers[item.stage]) containers[item.stage].innerHTML += html;
+            });
+        }
+
+        function initSigs() {
+            ['sig-com', 'sig-chf'].forEach(id => {
+                const canvas = document.getElementById(id);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let drawing = false;
+
+                const resize = () => {
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.offsetWidth * ratio;
+                    canvas.height = canvas.offsetHeight * ratio;
+                    ctx.scale(ratio, ratio);
+                };
+
+                window.addEventListener('resize', resize);
+                resize();
+
+                const getPos = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const clientX = e.clientX || e.touches?.[0]?.clientX;
+                    const clientY = e.clientY || e.touches?.[0]?.clientY;
+                    return { x: clientX - rect.left, y: clientY - rect.top };
+                };
+
+                const start = (e) => {
+                    e.preventDefault();
+                    drawing = true;
+                    ctx.beginPath();
+                    const pos = getPos(e);
+                    ctx.moveTo(pos.x, pos.y);
+                };
+
+                const draw = (e) => {
+                    if (!drawing) return;
+                    e.preventDefault();
+                    const pos = getPos(e);
+                    ctx.lineTo(pos.x, pos.y);
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                };
+
+                canvas.addEventListener('mousedown', start);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', () => drawing = false);
+                canvas.addEventListener('touchstart', start);
+                canvas.addEventListener('touchmove', draw);
+                canvas.addEventListener('touchend', () => drawing = false);
+            });
+        }
+
+        function clearSig(id) {
+            const c = document.getElementById(id);
+            if (c) c.getContext('2d').clearRect(0, 0, c.width, c.height);
+        }
+
+        function syncName(inputId, pId) {
+            const val = document.getElementById(inputId).value;
+            const p = document.getElementById(pId);
+            if (p) p.textContent = val.toUpperCase();
+        }
+
+        window.onload = () => {
+            buildChecklist();
+            initSigs();
+        };
+    </script>
+</body>
+</html>
