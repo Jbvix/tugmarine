@@ -1599,7 +1599,7 @@ const VESSEL_DATA = {
             }
         },
         "320_CRAO": {
-            "name": "Smit Cra\u00f3 (HULL 320)",
+            "name": "Smit Cra\u00f3 (Casco 320)",
             "unit": "mm",
             "trim_type": "linear",
             "tanks": [
