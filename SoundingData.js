@@ -710,7 +710,7 @@ const VESSEL_DATA = {
             }
         },
         "320_CARAJA": {
-            "name": "Smit Caraj\u00e1 (HULL 320)",
+            "name": "Smit Caraj\u00e1 (Casco 326)",
             "unit": "mm",
             "trim_type": "linear",
             "tanks": [
