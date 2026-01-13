@@ -19,7 +19,7 @@ The suite is built on a modular architecture using Vanilla JavaScript and Tailwi
 
 * **`SoundingData.js`**: Centralized, unified database of tanl calibration tables (Sounding vs Volume) for all supported vessel classes.
 * **`CalculatorEngine.js`**: The mathematical core that handles interpolation (Bilinear/Linear), unit conversion (CM/MM), and volume logic.
-* **`TUGLIFE Marine - Command Center v4.2.html`**: The main dashboard and navigation hub.
+* **`TUGLIFE Marine - Command Center v4.2.html`**: The main dashboard and navigation hub (Now deployed as `index.html`).
 * **`TUGLIFE - Marine Calculator.html`**: The primary tool for sounding and tank inventory.
 * **`Bunkering Checklist.html`**: Digital compliance tool for bunkering operations.
 
@@ -48,8 +48,14 @@ The suite is built on a modular architecture using Vanilla JavaScript and Tailwi
 * **Workflow:** Segregated into Pre-Check, Monitoring (every 30m), and Post-Check phases.
 * **Responsiveness:** Optimized specifically for mobile screens (Xiaomi Poco X6 Pro reference) with vertical stacking grids.
 
-### 3. 🛡️ Command Center
+### 3. 🛡️ Command Center v4.2 (Admin Controlled)
 
+* **Access Control (NEW):** Restricted access system with "Lock" icon entry.
+* **Admin Dashboard:**
+  * Protected by Master Password.
+  * Generators for unique 6-character access tokens.
+  * **WhatsApp Invitations:** Send access tokens directly to crew members via WhatsApp link.
+  * **Revocation:** Instantly revoke access for specific tokens.
 * **Global Identity:** Persists vessel name, port, and Chief Engineer name across all modules using `LocalStorage`.
 * **Navigation:** Central access point to all tools (Calculator, Bunkering, Auto Auditor, History).
 

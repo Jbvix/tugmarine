@@ -432,6 +432,15 @@
             renderTokensList();
         }
 
+        function copyInvite(token, name) {
+            const message = `Olá *${name}*, aqui está seu acesso ao *TUGLIFE Marine Command Center*.\n\nLink: ${APP_URL}\nToken DE ACESSO: *${token}*\n\nInsira este token para entrar.`;
+            navigator.clipboard.writeText(message).then(() => {
+                alert('Convite copiado para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+            });
+        }
+
         function sendWhatsApp(token, name) {
             const message = `Olá *${name}*, aqui está seu acesso ao *TUGLIFE Marine Command Center*.\n\nLink: ${APP_URL}\nToken DE ACESSO: *${token}*\n\nInsira este token para entrar.`;
             const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -454,6 +463,9 @@
                         <p class="text-[10px] text-blue-400 font-mono tracking-wider">${t.token}</p>
                     </div>
                     <div class="flex items-center space-x-2">
+                        <button onclick="copyInvite('${t.token}', '${t.name}')" class="text-slate-400 hover:text-white p-1" title="Copiar Link">
+                            <i data-lucide="link" class="w-4 h-4"></i>
+                        </button>
                         <button onclick="sendWhatsApp('${t.token}', '${t.name}')" class="text-green-500 hover:text-green-400 p-1" title="Enviar whatsapp">
                             <i data-lucide="message-circle" class="w-4 h-4"></i>
                         </button>
