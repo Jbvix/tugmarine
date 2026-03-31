@@ -17,11 +17,46 @@ The suite is built on a modular architecture using Vanilla JavaScript and Tailwi
 
 ### File Structure
 
-* **`SoundingData.js`**: Centralized, unified database of tanl calibration tables (Sounding vs Volume) for all supported vessel classes.
-* **`CalculatorEngine.js`**: The mathematical core that handles interpolation (Bilinear/Linear), unit conversion (CM/MM), and volume logic.
-* **`TUGLIFE Marine - Command Center v4.2.html`**: The main dashboard and navigation hub (Now deployed as `index.html`).
-* **`TUGLIFE - Marine Calculator.html`**: The primary tool for sounding and tank inventory.
-* **`Bunkering Checklist.html`**: Digital compliance tool for bunkering operations.
+```
+tugmarine/
+├── index.html                      # Command Center (entrada principal)
+├── netlify.toml                    # Config de deploy Netlify
+├── README.md
+│
+├── app/                            # Módulos da aplicação
+│   ├── calculator.html             # Marine Calculator (Sondagem → Volume)
+│   ├── bunkering-assistant.html    # Advanced Bunkering Assistant
+│   ├── bunkering-checklist.html    # Checklist Compliance (FOR-OPE-009)
+│   ├── validation-log.html         # Auto Validation Log
+│   ├── history.html                # Histórico de Operações
+│   ├── manual.html                 # User Manual (EN)
+│   └── manual-pt.html              # Manual do Utilizador (PT)
+│
+├── js/                             # Motor de cálculo
+│   ├── CalculatorEngine.js         # Interpolação bilinear/linear
+│   └── SoundingData.js             # Base de dados de calibração (VESSEL_DATA)
+│
+├── data/                           # Dados de referência
+│   └── bilinear-interpolation.json # Tabelas com correção de trim
+│
+├── docs/                           # Documentação técnica
+│   └── arquitetura.md              # Documento de Arquitetura
+│
+├── tools/                          # Pipeline de extração de dados
+│   ├── extract_excel_tables.py     # Excel → JSON
+│   ├── extract_pdf_dump.py         # PDF → texto
+│   ├── inspect_excel.py            # Auditoria de planilhas
+│   ├── scan_pdf_tanks.py           # Scanner de nomes de tanques
+│   └── output/                     # Saídas dos scripts
+│
+└── sources/                        # Tabelas de sondagem originais
+    ├── classe-a/                   # ASD 2411
+    ├── classe-c/                   # Canindé, Cascos 322-326, Carajá, Craó
+    ├── classe-p/
+    ├── classe-t/                   # Rampart 2500
+    ├── classe-lh1500/
+    └── pdf/                        # PDFs de referência
+```
 
 ---
 
