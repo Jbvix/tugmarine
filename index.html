@@ -206,14 +206,15 @@
         <p class="text-[9px] font-black text-slate-600 uppercase tracking-[0.5em]">Jossian Brito | 2026</p>
         <p class="text-[8px] text-slate-700 font-bold uppercase mt-2">Marine Operations Hub</p>
 
-        <!-- Admin Trigger -->
+        <!-- Admin Trigger (DISABLED - Access control hidden)
         <button onclick="openAdminLogin()"
             class="absolute right-0 bottom-0 p-4 opacity-50 hover:opacity-100 transition-opacity">
             <i data-lucide="lock" class="w-3 h-3 text-slate-800"></i>
         </button>
+        -->
     </footer>
 
-    <!-- Auth Modal -->
+    <!-- Auth Modal (DISABLED - Access control hidden)
     <div id="authModal" class="modal-overlay">
         <div class="glass-card rounded-[2rem] p-8 w-full max-w-sm mx-4 space-y-6 border border-blue-500/20 shadow-2xl transform transition-all scale-95 opacity-0"
             id="modalContent">
@@ -304,6 +305,7 @@
 
         </div>
     </div>
+    Auth Modal END -->
 
     <script>
         /**
@@ -507,7 +509,7 @@
         window.onload = () => {
             lucide.createIcons();
             loadIdentity();
-            initAuth();
+            // initAuth(); // DISABLED - Access control hidden
         };
     </script>
 </body>
