@@ -45,7 +45,7 @@ tugmarine/
 ├── tools/                          # Pipeline de extração de dados
 │   ├── extract_excel_tables.py     # Excel → JSON
 │   ├── extract_pdf_dump.py         # PDF → texto
-│   ├── inspect_excel.py            # Auditoria de planilhas
+│   ├── inspect_excel.py             # Auditoria de planilhas
 │   ├── scan_pdf_tanks.py           # Scanner de nomes de tanques
 │   └── output/                     # Saídas dos scripts
 │
@@ -130,3 +130,14 @@ Technical adjustments made for **Xiaomi Poco X6 Pro 5G** and similar devices:
 
 **Jossian Brito** | 2026
 *Marine Operations Hub*
+
+## Licença e Copyright
+
+**Copyright (c) 2026 Jossian Brito**
+
+Este projeto é licenciado sob a **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**.
+
+- Uso comercial não é permitido sem autorização expressa prévia do autor.
+- A atribuição ao autor original é obrigatória.
+
+O texto completo da licença está no arquivo [LICENSE](LICENSE).
