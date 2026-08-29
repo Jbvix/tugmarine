@@ -1,5 +1,5 @@
 import { getStore } from "@netlify/blobs";
-import * as usage from "./_shared/usage.mjs";
+import { addMessage, checkAdminPin, computeStats, filterIndex, inboxForDevice, toIndexRow, validateCreate } from "./_shared/usage.mjs";
 
 const hits = new Map();
 
@@ -47,7 +47,7 @@ async function loadSession(s, id) {
 async function saveSession(s, session) {
     await s.setJSON(`session:${id(session)}`, session);
     const index = await loadIndex(s);
-    const row = usage.toIndexRow(session);
+    const row = toIndexRow(session);
     const i = index.findIndex((r) => r.id === session.id);
     if (i >= 0) index[i] = row;
     else index.push(row);
@@ -59,7 +59,7 @@ function id(session) {
 }
 
 function requireAdmin(req) {
-    return usage.checkAdminPin(req.headers.get("x-admin-pin") || "", adminPin());
+    return checkAdminPin(req.headers.get("x-admin-pin") || "", adminPin());
 }
 
 export default async (req, context) => {
@@ -75,7 +75,7 @@ export default async (req, context) => {
         if (method === "POST" && path === "/api/sessions") {
             if (rateLimited(context.ip || "unknown")) return json({ error: "muitas tentativas" }, 429);
             const body = await req.json();
-            const result = usage.validateCreate(body);
+            const result = validateCreate(body);
             if (result.error) return json({ error: result.error }, result.status);
             const s = store();
             await saveSession(s, result.session);
@@ -98,7 +98,7 @@ export default async (req, context) => {
                     sessions.push(full);
                 }
             }
-            return json({ sessions: usage.inboxForDevice(sessions, device) });
+            return json({ sessions: inboxForDevice(sessions, device) });
         }
 
         const replyMatch = path.match(/^\/api\/sessions\/([^/]+)\/reply$/);
@@ -107,7 +107,7 @@ export default async (req, context) => {
             const s = store();
             const session = await loadSession(s, replyMatch[1]);
             if (!session) return json({ error: "sessão não encontrada" }, 404);
-            const result = usage.addMessage(session, "user", body.text, body.deviceId);
+            const result = addMessage(session, "user", body.text, body.deviceId);
             if (result.error) return json({ error: result.error }, result.status);
             await saveSession(s, result.session);
             return json({ ok: true });
@@ -119,7 +119,7 @@ export default async (req, context) => {
             const s = store();
 
             if (method === "GET" && path === "/api/admin/stats") {
-                return json(usage.computeStats(await loadIndex(s)));
+                return json(computeStats(await loadIndex(s)));
             }
 
             if (method === "GET" && path === "/api/admin/sessions") {
@@ -129,7 +129,7 @@ export default async (req, context) => {
                     verdict: url.searchParams.get("verdict") || "",
                     classeApelido: url.searchParams.get("classeApelido") || ""
                 };
-                return json({ sessions: usage.filterIndex(await loadIndex(s), q) });
+                return json({ sessions: filterIndex(await loadIndex(s), q) });
             }
 
             const msgMatch = path.match(/^\/api\/admin\/sessions\/([^/]+)\/messages$/);
@@ -137,7 +137,7 @@ export default async (req, context) => {
                 const body = await req.json();
                 const session = await loadSession(s, msgMatch[1]);
                 if (!session) return json({ error: "sessão não encontrada" }, 404);
-                const result = usage.addMessage(session, "admin", body.text, null);
+                const result = addMessage(session, "admin", body.text, null);
                 if (result.error) return json({ error: result.error }, result.status);
                 await saveSession(s, result.session);
                 return json({ ok: true });
