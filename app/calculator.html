@@ -78,6 +78,16 @@
 
     <main class="max-w-md mx-auto space-y-4 pt-10">
 
+        <div id="admin-inbox" class="hidden glass-card rounded-2xl p-4 border border-amber-500/30 space-y-3">
+            <p class="text-[10px] font-black uppercase tracking-widest text-amber-400">Mensagem do Jossian</p>
+            <div id="inbox-thread" class="space-y-2 text-xs text-slate-300"></div>
+            <div class="flex space-x-2">
+                <input id="inbox-reply" type="text" placeholder="Responder..."
+                    class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                <button onclick="replyAdmin()" class="bg-amber-500 text-slate-950 font-black text-[10px] uppercase px-3 rounded-xl">Enviar</button>
+            </div>
+        </div>
+
         <!-- Header Técnico -->
         <header class="text-center py-6 border-b border-slate-800">
             <h1 class="text-2xl font-black uppercase italic tracking-tighter">Tuglife <span
@@ -218,6 +228,19 @@
                 <i data-lucide="share-2" class="w-4 h-4"></i>
                 <span>Compartilhar Relatório Completo</span>
             </button>
+
+            <div id="verdict-box" class="glass-card rounded-2xl p-4 space-y-3 border border-slate-800">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Este saldo está correto?</p>
+                <textarea id="verdict-comment" rows="2" placeholder="Comentário opcional"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white outline-none"></textarea>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="submitVerdict('correct')"
+                        class="py-3 rounded-xl bg-emerald-600/20 text-emerald-400 text-[10px] font-black uppercase border border-emerald-500/30">Resultado correto</button>
+                    <button onclick="submitVerdict('incorrect')"
+                        class="py-3 rounded-xl bg-red-600/20 text-red-400 text-[10px] font-black uppercase border border-red-500/30">Resultado incorreto</button>
+                </div>
+                <p id="verdict-status" class="text-[10px] text-slate-500 font-bold uppercase hidden"></p>
+            </div>
         </section>
 
         <footer class="py-10 text-center space-y-2">
@@ -228,6 +251,7 @@
     </main>
 
     <!-- Load Unified Data and Logic -->
+    <script src="../data/fleet.js"></script>
     <script src="../js/SoundingData.js"></script>
     <script src="../js/CalculatorEngine.js"></script>
 
@@ -280,6 +304,116 @@
                 selClass.appendChild(og);
             });
             renderTanks();
+            loadInbox();
+        }
+
+        function getDeviceId() {
+            let id = localStorage.getItem("TUGLIFE_DEVICE_ID");
+            if (!id) {
+                id = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now());
+                localStorage.setItem("TUGLIFE_DEVICE_ID", id);
+            }
+            return id;
+        }
+
+        function identity() {
+            const global = JSON.parse(localStorage.getItem("TUGLIFE_GLOBAL") || "{}");
+            const ship = (window.FLEET_VESSELS || []).find((v) => v.vessel === global.vessel) || {};
+            return {
+                vessel: global.vessel || "",
+                port: global.port || "",
+                imo: global.imo || ship.imo || "",
+                mmsi: global.mmsi || ship.mmsi || "",
+                classeApelido: global.classeApelido || ship.classeApelido || "",
+                designClass: global.designClass || ship.designClass || "",
+                chemaq: localStorage.getItem("TUGLIFE_CHEMAQ") || ""
+            };
+        }
+
+        async function submitVerdict(verdict) {
+            const status = document.getElementById("verdict-status");
+            const idn = identity();
+            if (!idn.vessel || !idn.port || !idn.chemaq) {
+                status.textContent = "Preencha rebocador, filial e chemaq no Command Center";
+                status.classList.remove("hidden");
+                return;
+            }
+            if (!measurements.length) return;
+            status.classList.remove("hidden");
+            status.textContent = "A enviar…";
+            try {
+                const res = await fetch("/api/sessions", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        deviceId: getDeviceId(),
+                        vessel: idn.vessel,
+                        port: idn.port,
+                        chemaq: idn.chemaq,
+                        imo: idn.imo,
+                        mmsi: idn.mmsi,
+                        classeApelido: idn.classeApelido,
+                        designClass: idn.designClass,
+                        calcClassId: selClass.value,
+                        calcClassName: selClass.options[selClass.selectedIndex].text,
+                        tanks: measurements.map((m) => ({
+                            tankId: m.tankId,
+                            tankName: m.tankName,
+                            sounding: m.sounding,
+                            volume: m.vol
+                        })),
+                        verdict,
+                        comment: document.getElementById("verdict-comment").value
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "falha");
+                status.textContent = verdict === "correct" ? "Registado como correto" : "Registado como incorreto";
+            } catch (err) {
+                status.textContent = "Sem rede ou API. O log local manteve-se. " + err.message;
+            }
+        }
+
+        let inboxSessionId = null;
+
+        async function loadInbox() {
+            try {
+                const res = await fetch("/api/sessions/inbox?device=" + encodeURIComponent(getDeviceId()));
+                if (!res.ok) return;
+                const data = await res.json();
+                const box = document.getElementById("admin-inbox");
+                const thread = document.getElementById("inbox-thread");
+                const sessions = (data.sessions || []).filter((s) => (s.messages || []).length);
+                if (!sessions.length) {
+                    box.classList.add("hidden");
+                    return;
+                }
+                const latest = sessions.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
+                inboxSessionId = latest.id;
+                thread.innerHTML = latest.messages.map((m) =>
+                    `<p><span class="font-black uppercase text-slate-500">${m.from === "admin" ? "Jossian" : "Eu"}:</span> ${String(m.text).replace(/[<>&]/g, "")}</p>`
+                ).join("");
+                box.classList.remove("hidden");
+            } catch {
+                /* inbox opcional */
+            }
+        }
+
+        async function replyAdmin() {
+            const text = document.getElementById("inbox-reply").value;
+            if (!text || !inboxSessionId) return;
+            try {
+                const res = await fetch("/api/sessions/" + inboxSessionId + "/reply", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ deviceId: getDeviceId(), text })
+                });
+                if (!res.ok) return;
+                document.getElementById("inbox-reply").value = "";
+                loadInbox();
+            } catch {
+                /* silêncio */
+            }
         }
 
         function renderTanks() {

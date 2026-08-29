@@ -88,14 +88,16 @@
 
             <div class="space-y-3">
                 <div class="relative">
-                    <input type="text" id="global-vessel" oninput="saveIdentity()" placeholder="REBOCADOR"
-                        class="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-4 pl-12 text-xs font-black uppercase text-white outline-none focus:ring-2 focus:ring-blue-600 transition-all">
+                    <select id="global-vessel" onchange="saveIdentity()"
+                        class="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-4 pl-12 text-xs font-black uppercase text-white outline-none focus:ring-2 focus:ring-blue-600 transition-all appearance-none">
+                    </select>
                     <i data-lucide="ship" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
                 </div>
 
                 <div class="relative">
-                    <input type="text" id="global-port" oninput="saveIdentity()" placeholder="PORTO / FILIAL"
-                        class="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-4 pl-12 text-xs font-black uppercase text-white outline-none focus:ring-2 focus:ring-blue-600 transition-all">
+                    <select id="global-port" onchange="saveIdentity()"
+                        class="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-4 pl-12 text-xs font-black uppercase text-white outline-none focus:ring-2 focus:ring-blue-600 transition-all appearance-none">
+                    </select>
                     <i data-lucide="map-pin"
                         class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
                 </div>
@@ -194,35 +196,48 @@
 
     <!-- Auth Modal REMOVED - See docs/access-control.md for full documentation -->
 
+    <script src="data/fleet.js"></script>
+    <script src="data/branches.js"></script>
     <script>
-        /**
-         * LÓGICA DE SINCRONIZAÇÃO GLOBAL
-         * Autor: Jossian Brito | v4.2
-         */
+        function fillSelect(el, items, placeholder) {
+            el.innerHTML = `<option value="">${placeholder}</option>`;
+            items.forEach((item) => {
+                const opt = document.createElement("option");
+                opt.value = item;
+                opt.textContent = item;
+                el.appendChild(opt);
+            });
+        }
 
         function saveIdentity() {
+            const vesselName = document.getElementById("global-vessel").value;
+            const ship = (window.FLEET_VESSELS || []).find((v) => v.vessel === vesselName) || {};
             const data = {
-                vessel: document.getElementById('global-vessel').value,
-                port: document.getElementById('global-port').value
+                vessel: vesselName,
+                port: document.getElementById("global-port").value,
+                imo: ship.imo || "",
+                mmsi: ship.mmsi || "",
+                classeApelido: ship.classeApelido || "",
+                designClass: ship.designClass || ""
             };
-            const chemaq = document.getElementById('global-chemaq').value;
-
-            // Persistência em LocalStorage (Barramento de Dados)
-            localStorage.setItem('TUGLIFE_GLOBAL', JSON.stringify(data));
-            localStorage.setItem('TUGLIFE_CHEMAQ', chemaq);
+            localStorage.setItem("TUGLIFE_GLOBAL", JSON.stringify(data));
+            localStorage.setItem("TUGLIFE_CHEMAQ", document.getElementById("global-chemaq").value);
         }
 
         function loadIdentity() {
-            const savedGlobal = JSON.parse(localStorage.getItem('TUGLIFE_GLOBAL'));
-            const savedChemaq = localStorage.getItem('TUGLIFE_CHEMAQ');
+            fillSelect(document.getElementById("global-vessel"), (window.FLEET_VESSELS || []).map((v) => v.vessel), "REBOCADOR");
+            fillSelect(document.getElementById("global-port"), window.SAAM_BRANCHES || [], "PORTO / FILIAL");
 
+            const savedGlobal = JSON.parse(localStorage.getItem("TUGLIFE_GLOBAL") || "null");
+            const savedChemaq = localStorage.getItem("TUGLIFE_CHEMAQ");
             if (savedGlobal) {
-                document.getElementById('global-vessel').value = savedGlobal.vessel || '';
-                document.getElementById('global-port').value = savedGlobal.port || '';
+                const vesselEl = document.getElementById("global-vessel");
+                const portEl = document.getElementById("global-port");
+                if ([...vesselEl.options].some((o) => o.value === savedGlobal.vessel)) vesselEl.value = savedGlobal.vessel;
+                if ([...portEl.options].some((o) => o.value === savedGlobal.port)) portEl.value = savedGlobal.port;
             }
-            if (savedChemaq) {
-                document.getElementById('global-chemaq').value = savedChemaq;
-            }
+            if (savedChemaq) document.getElementById("global-chemaq").value = savedChemaq;
+            saveIdentity();
         }
 
         window.onload = () => {

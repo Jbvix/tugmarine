@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUGLIFE — Admin de uso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: Inter, sans-serif; background: #020617; color: #f8fafc; }
+        .glass { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.06); }
+    </style>
+</head>
+<body class="min-h-screen p-4 pb-16">
+    <div id="login" class="max-w-sm mx-auto pt-24 space-y-4">
+        <h1 class="text-2xl font-black uppercase italic">Admin <span class="text-blue-500">Uso</span></h1>
+        <p class="text-[10px] uppercase tracking-widest text-slate-500">Filiais SAAM Brasil</p>
+        <input id="pin" type="password" placeholder="PIN" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none">
+        <button onclick="login()" class="w-full py-3 bg-blue-600 rounded-2xl font-black uppercase text-xs">Entrar</button>
+        <p id="login-err" class="text-red-400 text-xs hidden"></p>
+    </div>
+
+    <div id="dash" class="hidden max-w-3xl mx-auto space-y-6 pt-6">
+        <header class="flex justify-between items-end">
+            <div>
+                <h1 class="text-2xl font-black uppercase italic">Validação <span class="text-blue-500">Nacional</span></h1>
+                <p class="text-[10px] uppercase tracking-widest text-slate-500 mt-1">Todas as filiais SAAM Brasil</p>
+            </div>
+            <button onclick="logout()" class="text-[10px] uppercase text-slate-500 font-black">Sair</button>
+        </header>
+
+        <section id="stats" class="grid grid-cols-2 md:grid-cols-4 gap-3"></section>
+        <section id="by-port" class="glass rounded-2xl p-4 text-xs space-y-1"></section>
+
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <select id="f-port" onchange="loadList()" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs"></select>
+            <select id="f-verdict" onchange="loadList()" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs">
+                <option value="">Veredito</option>
+                <option value="correct">Correto</option>
+                <option value="incorrect">Incorreto</option>
+            </select>
+            <input id="f-vessel" oninput="loadList()" placeholder="Navio" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs col-span-2">
+        </section>
+
+        <section id="list" class="space-y-2"></section>
+        <section id="detail" class="hidden glass rounded-2xl p-5 space-y-4"></section>
+    </div>
+
+    <script src="../data/branches.js"></script>
+    <script>
+        const pinKey = "TUGLIFE_ADMIN_PIN";
+        let currentId = null;
+
+        function pin() { return sessionStorage.getItem(pinKey) || ""; }
+        function headers() { return { "Content-Type": "application/json", "X-Admin-Pin": pin() }; }
+
+        async function login() {
+            sessionStorage.setItem(pinKey, document.getElementById("pin").value);
+            const res = await fetch("/api/admin/stats", { headers: headers() });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                document.getElementById("login-err").textContent = data.error || "PIN recusado";
+                document.getElementById("login-err").classList.remove("hidden");
+                sessionStorage.removeItem(pinKey);
+                return;
+            }
+            document.getElementById("login").classList.add("hidden");
+            document.getElementById("dash").classList.remove("hidden");
+            fillPorts();
+            await refresh();
+        }
+
+        function logout() {
+            sessionStorage.removeItem(pinKey);
+            location.reload();
+        }
+
+        function fillPorts() {
+            const sel = document.getElementById("f-port");
+            sel.innerHTML = '<option value="">Todas as filiais</option>';
+            (window.SAAM_BRANCHES || []).forEach((p) => {
+                const o = document.createElement("option");
+                o.value = p;
+                o.textContent = p;
+                sel.appendChild(o);
+            });
+        }
+
+        async function refresh() {
+            const stats = await (await fetch("/api/admin/stats", { headers: headers() })).json();
+            document.getElementById("stats").innerHTML = [
+                ["Sessões", stats.total],
+                ["Hoje", stats.today],
+                ["Filiais", stats.ports],
+                ["% correto", stats.correctPct + "%"]
+            ].map(([k, v]) => `<div class="glass rounded-2xl p-4"><p class="text-[9px] uppercase text-slate-500 font-black">${k}</p><p class="text-2xl font-black">${v}</p></div>`).join("");
+
+            const ports = Object.entries(stats.byPort || {});
+            document.getElementById("by-port").innerHTML = "<p class='text-[10px] font-black uppercase text-slate-500 mb-2'>Por filial</p>" +
+                (ports.length ? ports.map(([p, n]) => `<div class="flex justify-between"><span>${p}</span><span>${n.correct}/${n.total} corretos</span></div>`).join("") : "<p class='text-slate-600'>Ainda sem sessões</p>");
+            await loadList();
+        }
+
+        async function loadList() {
+            const q = new URLSearchParams();
+            const port = document.getElementById("f-port").value;
+            const verdict = document.getElementById("f-verdict").value;
+            const vessel = document.getElementById("f-vessel").value.trim();
+            if (port) q.set("port", port);
+            if (verdict) q.set("verdict", verdict);
+            if (vessel) q.set("vessel", vessel);
+            const data = await (await fetch("/api/admin/sessions?" + q.toString(), { headers: headers() })).json();
+            document.getElementById("list").innerHTML = (data.sessions || []).map((s) => `
+                <button onclick="openSession('${s.id}')" class="w-full text-left glass rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-black uppercase">${s.vessel} · ${s.port}</p>
+                        <p class="text-[10px] text-slate-500">${s.chemaq} · ${new Date(s.createdAt).toLocaleString("pt-BR")}</p>
+                    </div>
+                    <span class="text-[10px] font-black uppercase ${s.verdict === "correct" ? "text-emerald-400" : "text-red-400"}">${s.verdict === "correct" ? "correto" : "incorreto"} · ${Math.round(s.totalLiters).toLocaleString("pt-BR")} L</span>
+                </button>`).join("") || "<p class='text-slate-600 text-xs'>Nenhuma sessão</p>";
+        }
+
+        async function openSession(id) {
+            currentId = id;
+            const s = await (await fetch("/api/admin/sessions/" + id, { headers: headers() })).json();
+            const tanks = (s.tanks || []).map((t) => `<p class="text-xs">${t.tankName}: ${t.sounding} → ${Math.round(t.volume).toLocaleString("pt-BR")} L</p>`).join("");
+            const msgs = (s.messages || []).map((m) => `<p class="text-xs"><span class="font-black uppercase text-slate-500">${m.from}:</span> ${m.text}</p>`).join("");
+            document.getElementById("detail").classList.remove("hidden");
+            document.getElementById("detail").innerHTML = `
+                <p class="text-[10px] font-black uppercase text-blue-400">${s.vessel} · ${s.port}</p>
+                <p class="text-xs text-slate-400">${s.chemaq} · ${s.calcClassName || ""} · IMO ${s.imo || "—"}</p>
+                <p class="text-sm font-black">${Math.round(s.totalLiters).toLocaleString("pt-BR")} L · ${s.verdict === "correct" ? "correto" : "incorreto"}</p>
+                ${s.comment ? `<p class="text-xs text-slate-300">“${s.comment}”</p>` : ""}
+                <div class="space-y-1">${tanks}</div>
+                <div class="space-y-1 border-t border-slate-800 pt-3">${msgs || "<p class='text-slate-600 text-xs'>Sem mensagens</p>"}</div>
+                <div class="flex space-x-2">
+                    <input id="admin-msg" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs" placeholder="Responder ao chemaq">
+                    <button onclick="sendMsg()" class="bg-blue-600 px-4 rounded-xl text-[10px] font-black uppercase">Enviar</button>
+                </div>`;
+            document.getElementById("detail").scrollIntoView({ behavior: "smooth" });
+        }
+
+        async function sendMsg() {
+            const text = document.getElementById("admin-msg").value;
+            if (!text || !currentId) return;
+            const res = await fetch("/api/admin/sessions/" + currentId + "/messages", {
+                method: "POST",
+                headers: headers(),
+                body: JSON.stringify({ text })
+            });
+            if (res.ok) openSession(currentId);
+        }
+
+        if (pin()) login();
+    </script>
+</body>
+</html>

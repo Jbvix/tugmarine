@@ -120,6 +120,18 @@ Technical adjustments made for **Xiaomi Poco X6 Pro 5G** and similar devices:
 
 ---
 
+## Admin de uso (filiais SAAM Brasil)
+
+Após um saldo na calculadora, o chemaq marca **correto** ou **incorreto**. O autor vê as sessões em `/app/admin`.
+
+1. No Netlify: **Site configuration → Environment variables** → `ADMIN_PIN` (só tu conheces).
+2. Redeploy.
+3. Abre `https://tugmarine.netlify.app/app/admin` e entra com o PIN.
+
+Sem `ADMIN_PIN` o admin devolve 503. O Command Center não tem atalho para esta página.
+
+---
+
 ## 💻 Technical Stack
 
 * **Core:** HTML5, JavaScript (ES6 Modules)
