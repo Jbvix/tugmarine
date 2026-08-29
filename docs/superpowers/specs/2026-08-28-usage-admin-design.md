@@ -43,16 +43,6 @@ A planilha de frota (VESSEL, IMO, MMSI, YEAR, faixa de idade, BP, PROP, FIFI, de
 - A classe apelido **não escolhe** a tabela de sondagem. A calculadora continua com as chaves atuais (`321_CANINDE`, `320_CRAO`, `C407_STARNAV`, …). A frota só identifica o casco para o admin.
 - Hugo / Philippe entram na lista de identidade; não recebem livro de sondagem novo.
 
-## Filiais SAAM Brasil
-
-`data/branches.js` (`SAAM_BRANCHES`) — select de porto/filial no Command Center. Lista inicial (completar se faltar alguma):
-
-Santos, Itaguaí, Rio de Janeiro, Angra dos Reis, Vitória, Tubarão, Salvador, Ilhéus, Aracaju, Maceió, Recife, Suape, Natal, Fortaleza, Pecém, São Luís (Itaqui), Belém, Manaus, Paranaguá, São Francisco do Sul, Itajaí, Imbituba, Rio Grande.
-
-- A sessão guarda `port` exatamente como na lista (ex.: `Santos`, `São Luís (Itaqui)`).
-- Sem filial da lista → 400 no `POST /api/sessions`.
-- São Luís é uma filial entre as outras; não há lógica, filtro default, nem campanha exclusiva.
-
 Mapeamento só informativo (admin / notas), não automático no motor:
 
 | Classe apelido | Livro na calculadora (se existir) |
@@ -60,6 +50,16 @@ Mapeamento só informativo (admin / notas), não automático no motor:
 | Classe 3.000 - C | GHS 323 (Crao/Charrua/…) ou `321_CANINDE` |
 | Classe 80 CAT / 80 MTU / 70 MTU | livros STARNAV C407 / C417 / C398 |
 | Classe 2.500 - T / P, Classe A, INACE FIFI | só o que já está no JS |
+
+## Filiais SAAM Brasil
+
+`data/branches.js` (`SAAM_BRANCHES`) — select de porto/filial no Command Center. Lista oficial desta spec:
+
+Santos, Itaguaí, Rio, Angra, Vitória, Salvador, Suape, Pecém, São Luís (Itaqui), Belém, Paranaguá, São Francisco do Sul, Itajaí, Imbituba, Rio Grande, Santana (Macapá).
+
+- A sessão guarda `port` exatamente como na lista (ex.: `Santos`, `São Luís (Itaqui)`).
+- Sem filial da lista → 400 no `POST /api/sessions`.
+- São Luís é uma filial entre as outras; não há lógica, filtro default, nem campanha exclusiva.
 
 ## API
 
