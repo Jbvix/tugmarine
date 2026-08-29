@@ -57,7 +57,7 @@
       }
     },
     "C_CAN": {
-      "name": "Classe C (Canindé)",
+      "name": "Classe C genérica Ramparts 3000 — NÃO usar no Canindé",
       "unit": "mm",
       "tanks": {
         "FODAY.P": {

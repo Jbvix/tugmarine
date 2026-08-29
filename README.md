@@ -51,7 +51,7 @@ tugmarine/
 │
 └── sources/                        # Tabelas de sondagem originais
     ├── classe-a/                   # ASD 2411
-    ├── classe-c/                   # Canindé, Cascos 322-326, Carajá, Craó
+    ├── classe-c/                   # Hull 323 série + Canindé Hull 321 (livro próprio)
     ├── classe-p/
     ├── classe-t/                   # Rampart 2500
     ├── classe-lh1500/
@@ -101,10 +101,12 @@ tugmarine/
 The system currently includes calibration tables for:
 
 * **Classe A (ASD 2411)** - *Unit: CM*
-* **Classe C (Canindé/Cascos 322-326)** - *Unit: MM*
-* **Classe P** - *Unit: MM*
-* **Classe T (Rampart 2500)** - *Unit: MM*
-* **Classe LH1500** - *Unit: MM*
+* **Classe C genérica Ramparts 3000 (GHS Hull 323)** — *não usar no Canindé*
+* **SAAM CRAO / CHARRUA — Hull 323** — mesma GHS No Trim (inclui overflow)
+* **SAAM CARAJÁ — Hull 326** — série GHS 323 (carimbo Excel)
+* **SAAM CANINDÉ — Hull 321** — livro próprio (FO_DB.P = 3485 mm)
+* **STARNAV** — três livros, sem misturar: C407–C414, C398 Altair, C417 Águia
+* **Classe P / T / LH1500 / Chile** — sem alteração (sem tabela nova no Drive)
 
 ---
 

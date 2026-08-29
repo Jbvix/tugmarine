@@ -98,6 +98,7 @@
                         class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer">
                         <!-- Populated by JS -->
                     </select>
+                    <p id="class-notes" class="text-[10px] text-amber-400/90 font-medium leading-snug px-1 hidden"></p>
                 </div>
                 <div class="space-y-1">
                     <label class="text-[10px] font-black text-slate-500 ml-1 uppercase">Tanque Selecionado</label>
@@ -113,11 +114,17 @@
         <section class="glass-card rounded-3xl p-5 space-y-4 shadow-xl border border-slate-800">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-1 text-center">
-                    <label
+                    <label id="label-sondagem"
                         class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none block mb-2">Sondagem
                         (cm)</label>
                     <input type="number" id="input-sondagem" oninput="performCalc()" placeholder="0.0" step="0.1"
                         class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-3xl font-black text-blue-500 outline-none text-center shadow-inner">
+                    <label id="gauge-row" class="hidden mt-3 flex items-center justify-center gap-2 text-[10px] font-bold text-emerald-400 uppercase">
+                        <input type="checkbox" id="input-gauge" onchange="performCalc()" class="rounded border-slate-600">
+                        Modo G (visor) — volume observado
+                    </label>
+                    <input type="number" id="input-gauge-vol" oninput="performCalc()" placeholder="L observados" step="1"
+                        class="hidden mt-2 w-full bg-slate-950 border border-emerald-800 rounded-2xl p-3 text-lg font-black text-emerald-400 outline-none text-center">
                 </div>
                 <div class="space-y-1 text-center">
                     <label
@@ -145,6 +152,7 @@
                             class="text-6xl font-black mono tracking-tighter text-white glow-text leading-none">0</span>
                         <span class="text-blue-100 font-bold text-xl opacity-60 uppercase">Lts</span>
                     </div>
+                    <p id="res-warn" class="hidden mt-3 text-[10px] font-bold uppercase tracking-wide text-amber-200"></p>
 
                     <div class="mt-6 pt-4 border-t border-white/10 flex justify-center md:justify-between items-end">
                         <div class="space-y-1">
@@ -242,23 +250,48 @@
         let currentPhotoFile = null;
 
         function init() {
-            // Populate Classes
             const classes = MarineCalculator.getClasses();
             selClass.innerHTML = '';
+            const groupOrder = [
+                "Ramparts 3000 — GHS Hull 323",
+                "Canindé — Hull 321 (livro próprio)",
+                "STARNAV — três livros, não misturar",
+                "Outras classes (não alterar)"
+            ];
+            const groups = new Map();
             classes.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.id;
-                opt.textContent = c.name;
-                selClass.appendChild(opt);
+                if (!groups.has(c.group)) groups.set(c.group, []);
+                groups.get(c.group).push(c);
             });
-
-            // Trigger tank render
+            const ordered = [
+                ...groupOrder.filter(g => groups.has(g)),
+                ...[...groups.keys()].filter(g => !groupOrder.includes(g))
+            ];
+            ordered.forEach(groupName => {
+                const items = groups.get(groupName);
+                const og = document.createElement('optgroup');
+                og.label = groupName;
+                items.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    og.appendChild(opt);
+                });
+                selClass.appendChild(og);
+            });
             renderTanks();
         }
 
         function renderTanks() {
             const classId = selClass.value;
             const config = MarineCalculator.getClassConfig(classId);
+            const notes = document.getElementById('class-notes');
+            notes.textContent = config.notes || '';
+            notes.classList.toggle('hidden', !config.notes);
+
+            const unitLabel = config.unit === 'm' ? 'Sondagem (m)' : config.unit === 'mm' ? 'Sondagem (cm)' : 'Sondagem (cm)';
+            document.getElementById('label-sondagem').textContent = unitLabel;
+            document.getElementById('input-sondagem').step = config.unit === 'm' ? '0.01' : '0.1';
 
             selTank.innerHTML = '';
             config.tanks.forEach(t => {
@@ -276,20 +309,43 @@
             const tankId = selTank.value;
             const sounding = parseFloat(document.getElementById('input-sondagem').value) || 0;
             const trim = parseFloat(document.getElementById('input-trim').value) || 0;
+            const config = MarineCalculator.getClassConfig(classId);
+            const tank = config.tanks.find(t => t.id === tankId);
+            const gaugeRow = document.getElementById('gauge-row');
+            const gaugeVol = document.getElementById('input-gauge-vol');
+            const useGauge = document.getElementById('input-gauge');
+            const warn = document.getElementById('res-warn');
 
-            const vol = MarineCalculator.calculateVolume(classId, tankId, sounding, trim);
-            const tank = MarineCalculator.getClassConfig(classId).tanks.find(t => t.id === tankId);
-            const max = tank ? tank.max_vol : 100;
+            const showGauge = !!(tank && tank.gauge);
+            gaugeRow.classList.toggle('hidden', !showGauge);
+            gaugeVol.classList.toggle('hidden', !(showGauge && useGauge.checked));
+
+            let vol = 0;
+            let status = 'ok';
+            let message = '';
+
+            if (showGauge && useGauge.checked) {
+                vol = parseFloat(gaugeVol.value) || 0;
+                status = 'gauge';
+                message = 'Modo G: volume do visor — a linha de sondagem não foi sobrescrita';
+            } else {
+                const result = MarineCalculator.lookupVolume(classId, tankId, sounding, trim);
+                vol = result.volume;
+                status = result.status;
+                message = result.message || '';
+            }
+
+            const max = tank && tank.max_vol ? tank.max_vol : 0;
             const pct = max > 0 ? (vol / max) * 100 : 0;
 
             currentCalc = vol;
-
-            // Animate Numbers (Simple)
             resVol.textContent = Math.round(vol).toLocaleString('pt-BR');
             resPct.textContent = pct.toFixed(1);
-
-            // Visual Level
             document.getElementById('tank-level').style.height = `${Math.min(pct, 100)}%`;
+
+            const showWarn = status !== 'ok' && (message || status === 'gauge');
+            warn.classList.toggle('hidden', !showWarn);
+            warn.textContent = message;
         }
 
         function triggerCamera() {
