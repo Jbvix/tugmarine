@@ -1,17 +1,18 @@
-const { SAAM_BRANCHES } = require("../../../data/branches.js");
-const { FLEET_VESSELS } = require("../../../data/fleet.js");
+import { SAAM_BRANCHES, FLEET_VESSELS } from "./catalog.mjs";
 
-function findVessel(name) {
+export { SAAM_BRANCHES, FLEET_VESSELS };
+
+export function findVessel(name) {
     return FLEET_VESSELS.find((v) => v.vessel === name) || null;
 }
 
-function checkAdminPin(headerPin, envPin) {
+export function checkAdminPin(headerPin, envPin) {
     if (!envPin) return { status: 503, error: "ADMIN_PIN não configurado" };
     if (!headerPin || headerPin !== envPin) return { status: 401, error: "PIN inválido" };
     return { ok: true };
 }
 
-function validateCreate(body) {
+export function validateCreate(body) {
     if (!body || !body.deviceId) return { error: "deviceId obrigatório", status: 400 };
     if (!["correct", "incorrect"].includes(body.verdict)) return { error: "verdict inválido", status: 400 };
     if (!Array.isArray(body.tanks) || body.tanks.length === 0) return { error: "tanques obrigatórios", status: 400 };
@@ -53,7 +54,7 @@ function validateCreate(body) {
     };
 }
 
-function toIndexRow(session) {
+export function toIndexRow(session) {
     return {
         id: session.id,
         createdAt: session.createdAt,
@@ -68,7 +69,7 @@ function toIndexRow(session) {
     };
 }
 
-function computeStats(index) {
+export function computeStats(index) {
     const today = new Date().toISOString().slice(0, 10);
     const ports = new Set(index.map((r) => r.port));
     const vessels = new Set(index.map((r) => r.vessel));
@@ -93,7 +94,7 @@ function computeStats(index) {
     };
 }
 
-function filterIndex(index, q = {}) {
+export function filterIndex(index, q = {}) {
     return index
         .filter((r) => {
             if (q.port && r.port !== q.port) return false;
@@ -105,7 +106,7 @@ function filterIndex(index, q = {}) {
         .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }
 
-function addMessage(session, from, text, deviceId) {
+export function addMessage(session, from, text, deviceId) {
     if (from === "user" && session.deviceId !== deviceId) {
         return { error: "device não autorizado", status: 403 };
     }
@@ -123,7 +124,7 @@ function addMessage(session, from, text, deviceId) {
     return { session };
 }
 
-function inboxForDevice(sessions, deviceId) {
+export function inboxForDevice(sessions, deviceId) {
     return sessions
         .filter((s) => s.deviceId === deviceId)
         .map((s) => ({
@@ -136,16 +137,3 @@ function inboxForDevice(sessions, deviceId) {
         }))
         .filter((s) => s.messages.length > 0);
 }
-
-module.exports = {
-    SAAM_BRANCHES,
-    FLEET_VESSELS,
-    findVessel,
-    checkAdminPin,
-    validateCreate,
-    toIndexRow,
-    computeStats,
-    filterIndex,
-    addMessage,
-    inboxForDevice
-};

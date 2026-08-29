@@ -1,8 +1,5 @@
 import { getStore } from "@netlify/blobs";
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
-const usage = require("./_shared/usage.js");
+import * as usage from "./_shared/usage.mjs";
 
 const hits = new Map();
 

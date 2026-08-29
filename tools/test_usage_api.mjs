@@ -1,4 +1,4 @@
-const usage = require("../netlify/functions/_shared/usage.js");
+import * as usage from "../netlify/functions/_shared/usage.mjs";
 
 function assert(cond, name) {
     if (!cond) throw new Error("FAIL " + name);
